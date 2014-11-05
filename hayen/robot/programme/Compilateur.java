@@ -1,10 +1,12 @@
 package hayen.robot.programme;
 
-import hayen.robot.programme.instruction.Afficher;
-import hayen.robot.programme.instruction.Instruction;
 import hayen.robot.util.Util;
 import hayen.robot.programme.instruction.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Vector;
 
 public class Compilateur {
@@ -38,6 +40,35 @@ public class Compilateur {
 	public static final String comparaisonGrand = ">";
 	public static final String comparaisonPetit = "<";
 	public static final String comparaisonEgal = "=";
+	
+	public static final String exension = ".pr";
+	
+	// compile un programme à partir d'un fichier .pr
+	public static Instruction[] compileFichier(String adresse) throws IOException{
+		Vector<String> lignes = new Vector<String>();
+		
+		if (! adresse.endsWith(exension)){
+			System.err.println("Fichier invalide");
+			return null;
+		}
+		
+		else{
+			
+				File fichier = new File(adresse); // le fichier à lire
+				FileReader fr = new FileReader(fichier);
+				BufferedReader br = new BufferedReader(fr);
+				
+				String ligne;
+				while((ligne = br.readLine()) != null){
+					lignes.add(ligne);
+				}
+				
+				br.close();
+				fr.close();
+				
+		}
+		return compile(lignes.toArray(new String[lignes.size()]));
+	}
 
 	public static Instruction[] compile(String... texte){
 		Vector<Instruction> inst = new Vector<Instruction>();
@@ -273,6 +304,11 @@ public class Compilateur {
 		return inst.toArray(new Instruction[inst.size()]);
 	}
 
+/*	public static Instruction comileLigne(String ligne){
+		
+	}
+*/
+	
 	public static String[] separe(String texte){
 		Vector<String> mots = new Vector<String>();
 		TypeMot type = TypeMot.Inconnu;

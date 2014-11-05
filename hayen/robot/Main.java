@@ -1,28 +1,25 @@
 package hayen.robot;
 
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.Programme;
 
 public class Main {
 
 	public static void main(String[] args) {
-		Programme p;
-//		for (String s : Compilateur.separe("potato: 3")) System.out.println(s);
-		p = new Programme(Compilateur.compile(
-				"var i j ",
-				"i : 97",
-				"si j < 26",
-				"	j : 1+",
-				"	afficher .i .32",
-				"	i : 1+",
-				"	goto 3",
-				"sinon",
-				"	afficher .10 .102.105.110",
-				"fin"
-				));
-		p.executer();
-
-		
+		Programme p = null;
+		String adresse = JOptionPane.showInputDialog("Entrez l'adresse du fichier");
+		try{
+			p = new Programme(Compilateur.compileFichier(adresse));
+		} catch(IOException e){
+			System.err.println("Erreur lors de la lecture du fichier");
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		if (p != null) p.executer();
 	}
 
 }
