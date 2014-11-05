@@ -2,20 +2,23 @@ package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Programme;
 
-public class Fin extends Instruction {
-	
+public class Sinon extends Instruction {
+
 	private int _indentation;
 	
-	public Fin(int ind){
+	public Sinon(int ind){
 		_indentation = ind;
 	}
 	
-	public boolean run(Programme p){
+	@Override
+	public boolean run(Programme p) {
 		return p.getIndentation() == _indentation;
 	}
+
+	public int getIndentation(){ return _indentation; }
 	
 	public String toString(){
-		return "End: (" + _indentation + ")";
+		return "Else: (" + _indentation + ")";
 	}
 	
 }

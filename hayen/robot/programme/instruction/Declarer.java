@@ -15,5 +15,11 @@ public class Declarer extends Instruction {
 		for (String n : _nom) p.assigner(n, 0);
 		return true;
 	}
+	
+	public String toString(){
+		String n = "";
+		for (String s : _nom) n += s + ", ";
+		return "Declaration: " + n;
+	}
 
 }

@@ -78,8 +78,9 @@ public class Compilateur {
 							params.add(op[j]);
 						}
 					}
-					
-					inst.add(new Declarer(params.toArray(new String[params.size()])));
+					Instruction toAdd = new Declarer(params.toArray(new String[params.size()]));
+					inst.add(toAdd);
+//					System.out.println("" + i + ": new " + toAdd);
 				}
 				else{
 					System.out.println("ERREUR: expression invalide (une déclaration doit être fait sous la forme: var <nom>)\n" + "ln." + (i+1));
@@ -110,7 +111,9 @@ public class Compilateur {
 					}
 					param[j-1] = op[j];
 				}
-				inst.add(new Afficher(param));
+				Instruction toAdd = new Afficher(param);
+				inst.add(toAdd);
+//				System.out.println("" + i + ": new " + toAdd);
 			}
 			else if (first.equals(motBoucle)){ // goto
 				// syntaxe : goto <nombre>
@@ -123,7 +126,9 @@ public class Compilateur {
 					for (int j = i; j < texte.length; j++) if (separe(texte[j]).length == 0) d++;
 					int ln = new Integer(op[1]) - decalage - 1 - d;
 //					System.out.println("Set GOTO at ln. " + i + " to ln. " + ln);
-					inst.add(new Boucle(ln));
+					Instruction toAdd = new Boucle(ln);
+					inst.add(toAdd);
+//					System.out.println("" + i + ": new " + toAdd);
 				}
 
 			}
@@ -155,20 +160,30 @@ public class Compilateur {
 						params.add(terme);
 					}
 				}
-				
-				inst.add(new Condition(params.toArray()));
+				Instruction toAdd = new Condition(indentation, params.toArray());
+				inst.add(toAdd);
+//				System.out.println("" + i + ": new " + toAdd);
 
 			}
 			else if (first.equals(motSinon)){ // else
-
+				// n'a pas de parametre et doit être dans un bloc if (indentation >= 1)
+				if (op.length > 1 || indentation < 1){
+					System.out.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
+					return null;
+				}
+				Instruction toAdd = new Sinon(indentation);
+				inst.add(toAdd);
+//				System.out.println("" + i + ": new " + toAdd);
 			}
 			else if (first.equals(motFin)){
-				indentation--;
 				if (indentation < 0){ // si le bloc d'indentation est plus petit que zéro, il y a une erreur
 					System.out.println("ERREUR: Symbole fin en trop\n" + "ln." + (i+1));
 					return null;
 				}
-				inst.add(new Fin());
+				Instruction toAdd = new Fin(indentation);
+				inst.add(toAdd);
+//				System.out.println("" + i + ": new " + toAdd);
+				indentation--;
 			}
 			else if (first.equals(motDeplacer)){ // deplacement
 
@@ -243,8 +258,9 @@ public class Compilateur {
 						}
 					}
 				}
-
-				inst.add(new Assigner(ids.toArray(new String[ids.size()]), terme.toArray()));
+				Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme.toArray());
+				inst.add(toAdd);
+//				System.out.println("" + i + ": new " + toAdd);
 			}
 
 		}

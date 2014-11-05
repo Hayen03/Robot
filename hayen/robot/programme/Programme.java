@@ -9,31 +9,53 @@ public class Programme {
 	private Instruction[] _instructions; // la liste d'instruction
 	private Hashtable<String, Integer> _variables; // dictionaire des variables
 	private int _ligne; // la ligne à laquelle le programme est rendu
+	private int _indentation; // l'indentation du présent bloc d'instruction
 	
 	public Programme(Instruction[] instructions){
 		_instructions = instructions;
 		_variables = new Hashtable<String, Integer>();
 		_ligne = 0;
+		_indentation = 0;
 	}
 	
 	public boolean executer(){
 		while (_ligne < _instructions.length) {
-//			System.out.print("LIGNE " + (_ligne+1) + ">>> ");
+	//		System.out.print("\tLIGNE " + (_ligne+1) + ">>> ");
 			
 			// détecteur de condition
-			if (_instructions[_ligne].getClass().equals(Condition.class)){ // si c'est une condition et que la condition est fausse
-				if (!_instructions[_ligne].run(this)){
-					int indentation = 0;
-					while (!_instructions[++_ligne].getClass().equals(Fin.class) && !(indentation > 0)){
-						if (_instructions[_ligne].getClass().equals(Condition.class)) indentation++;
-						else if (_instructions[_ligne].getClass().equals(Fin.class)) indentation--;
+			if (_instructions[_ligne].getClass().equals(Condition.class)){ // si c'est une condition...
+	//			System.out.print("CONDITION ");
+				_indentation = ((Condition)_instructions[_ligne]).getIndentation();
+	//			System.out.print("(" + _indentation + ") ");
+				if (!_instructions[_ligne].run(this)){ // ...on l'évalue. Si elle est fausse...
+					// on cherche un sinon ou un fin
+					while(_ligne < _instructions.length){
+						_ligne++;
+						Instruction i = _instructions[_ligne];
+						if (i.getClass().equals(Fin.class) || i.getClass().equals(Sinon.class)) 
+							if (i.run(this)) {
+	//							System.out.print("FIN");
+								break; // arrête la recherche si l'indentation est correcte && est fin
+						}
 					}
 				}
+//				_indentation = 0;
+				// si elle est vrai, et on passe à la prochaine instruction
 			}
-			else {
+			
+			else if (_instructions[_ligne].getClass().equals(Sinon.class)){ // si c'est un sinon, mais que l'on était pas à la recherche d'un sinon, on skip jusqu'au fin correspondant
+//				System.out.print("SINON ");
+				_indentation = ((Sinon)_instructions[_ligne]).getIndentation();
+				while(++_ligne < _instructions.length){
+					Instruction i = _instructions[_ligne];
+					if (i.getClass().equals(Fin.class)) if (i.run(this)) break; // arrête la recherche si l'indentation est correcte && est fin
+				}
+			}
+			
+			else { // si c'est une instruction normale
 				_instructions[_ligne].run(this);
 			}
-//			System.out.println();
+			
 			_ligne++;
 		}
 		return true;
@@ -53,6 +75,10 @@ public class Programme {
 	public int getLigne() { return _ligne; }
 	public void setLigne(int ln){
 		_ligne = ln;
+	}
+	
+	public int getIndentation(){
+		return _indentation;
 	}
 	
 }

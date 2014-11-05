@@ -15,5 +15,9 @@ public class Boucle extends Instruction {
 		p.setLigne(_ln);
 		return true;
 	}
+	
+	public String toString(){
+		return "Boucle: go to " + _ln;
+	}
 
 }

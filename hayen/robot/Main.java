@@ -9,13 +9,15 @@ public class Main {
 		Programme p;
 //		for (String s : Compilateur.separe("potato: 3")) System.out.println(s);
 		p = new Programme(Compilateur.compile(
-				"var i L",
-				"i : 1",
-				"L:97 # une lettre minuscule",
-				"si i < 27",
-				"	afficher .L",
-				"	i L : 1+",
-				"	goto 4",
+				"var i j ",
+				"i : 97",
+				"si j < 26",
+				"	j : 1+",
+				"	afficher .i .32",
+				"	i : 1+",
+				"	goto 3",
+				"sinon",
+				"	afficher .10 .102.105.110",
 				"fin"
 				));
 		p.executer();

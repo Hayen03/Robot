@@ -5,9 +5,11 @@ import hayen.robot.programme.Programme;
 public class Condition extends Instruction {
 	
 	private Object[] _expression;
+	private int _indentation;
 	
-	public Condition(Object... params){
+	public Condition(int ind, Object... params){
 		_expression = params;
+		_indentation = ind;
 	}
 
 	@Override
@@ -54,6 +56,14 @@ public class Condition extends Instruction {
 		}
 		
 		return retour;
+	}
+	
+	public int getIndentation(){
+		return _indentation;
+	}
+	
+	public String toString(){
+		return "Condition: (" + _indentation + ")"; 
 	}
 
 }

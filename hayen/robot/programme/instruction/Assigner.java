@@ -72,5 +72,11 @@ public class Assigner extends Instruction {
 		s[1] = v;
 		return s;
 	}
+	
+	public String toString(){
+		String s = "Assign: ";
+		for (String n : _ids) s += n + ", ";
+		return s;
+	}
 
 }

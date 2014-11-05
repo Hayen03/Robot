@@ -31,14 +31,12 @@ public class Afficher extends Instruction {
 		}
 		return true;
 	}
+	
+	public String toString(){
+		String s = "Print: ";
+		for (String e : _expression) s += e + ", ";
+		return s; 
+	}
 
 }
-/*
- * if (car){
-					System.out.print((char) v);
-				}
-				else {
-					System.out.print(v);
-					
-				}
- */
+
