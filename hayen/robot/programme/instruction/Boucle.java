@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Programme;
 
 public class Boucle extends Instruction {
@@ -18,6 +21,14 @@ public class Boucle extends Instruction {
 	
 	public String toString(){
 		return "Boucle: go to " + _ln;
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+		fichier.writeByte(Instruction.type.boucle.numero);
+		fichier.writeChar('#');
+		fichier.writeInt(_ln);
+		fichier.writeChar('&');
 	}
 
 }

@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
@@ -36,6 +39,16 @@ public class Afficher extends Instruction {
 		String s = "Print: ";
 		for (String e : _expression) s += e + ", ";
 		return s; 
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+			fichier.writeByte(Instruction.type.afficher.numero);
+			for (String str : _expression){
+				fichier.writeChar('$');
+				fichier.writeUTF(str);
+			}
+			fichier.writeChar('&');;
 	}
 
 }

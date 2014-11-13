@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Programme;
 
 public class Sinon extends Instruction {
@@ -19,6 +22,14 @@ public class Sinon extends Instruction {
 	
 	public String toString(){
 		return "Else: (" + _indentation + ")";
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+		fichier.writeByte((byte)Instruction.type.sinon.numero);
+		fichier.writeChar('#');
+		fichier.writeInt(_indentation);
+		fichier.writeChar('&');
 	}
 	
 }

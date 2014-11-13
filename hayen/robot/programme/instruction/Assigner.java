@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Programme;
 
 public class Assigner extends Instruction {
@@ -77,6 +80,34 @@ public class Assigner extends Instruction {
 		String s = "Assign: ";
 		for (String n : _ids) s += n + ", ";
 		return s;
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+		fichier.writeByte(Instruction.type.assigner.numero);
+		fichier.writeChar('#');
+		fichier.writeInt(_ids.length);
+		for (String str : _ids){
+			fichier.writeChar('$');
+			fichier.writeUTF(str);
+		}
+		fichier.writeChar('#');
+		fichier.writeInt(_termes.length);
+		for (Object obj : _termes){
+			if (obj.getClass().equals(String.class)){
+				fichier.writeChar('$');
+				fichier.writeUTF((String)obj);
+			}
+			else if (obj.getClass().equals(Character.class)){
+				fichier.writeChar('?');
+				fichier.writeChar((Character)obj);
+			}
+			else {
+				fichier.writeChar('#');
+				fichier.writeInt((Integer)obj);
+			}
+		}
+		fichier.writeChar('&');
 	}
 
 }

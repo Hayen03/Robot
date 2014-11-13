@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Programme;
 
 public class Fin extends Instruction {
@@ -16,6 +19,14 @@ public class Fin extends Instruction {
 	
 	public String toString(){
 		return "End: (" + _indentation + ")";
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+		fichier.writeByte(Instruction.type.fin.numero);
+		fichier.writeChar('#');
+		fichier.writeInt(_indentation);
+		fichier.writeChar('&');
 	}
 	
 }

@@ -4,9 +4,12 @@ import hayen.robot.util.Util;
 import hayen.robot.programme.instruction.*;
 
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+
 import java.util.Vector;
 
 public class Compilateur {
@@ -44,12 +47,11 @@ public class Compilateur {
 	public static final String exension = ".pr";
 	
 	// compile un programme à partir d'un fichier .pr
-	public static Instruction[] compileFichier(String adresse) throws IOException{
+	public static Instruction[] compileFichier(String adresse) throws IOException, FichierIncorrectException{
 		Vector<String> lignes = new Vector<String>();
 		
 		if (! adresse.endsWith(exension)){
-			System.err.println("Fichier invalide");
-			return null;
+			throw new FichierIncorrectException("extension invalide");
 		}
 		
 		else{
@@ -68,6 +70,14 @@ public class Compilateur {
 				
 		}
 		return compile(lignes.toArray(new String[lignes.size()]));
+	}
+	
+	public static void compileVersFichier(String adresse, Instruction... instructions) throws IOException{
+		DataOutputStream fichier = new DataOutputStream(new FileOutputStream(adresse));
+		for (Instruction i : instructions){
+			i.enregistrer(fichier);
+		}
+		fichier.close();
 	}
 
 	public static Instruction[] compile(String... texte){

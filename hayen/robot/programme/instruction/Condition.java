@@ -1,5 +1,8 @@
 package hayen.robot.programme.instruction;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+
 import hayen.robot.programme.Programme;
 
 public class Condition extends Instruction {
@@ -64,6 +67,31 @@ public class Condition extends Instruction {
 	
 	public String toString(){
 		return "Condition: (" + _indentation + ")"; 
+	}
+
+	@Override
+	public void enregistrer(DataOutputStream fichier) throws IOException {
+		fichier.writeByte(Instruction.type.condition.numero);
+		fichier.writeChar('#');
+		fichier.writeInt(_indentation);
+		fichier.writeChar('#');
+		fichier.writeInt(_expression.length);
+		for (Object obj : _expression){
+			if (obj.getClass().equals(String.class)){
+				fichier.writeChar('$');
+				fichier.writeUTF((String)obj);
+			}
+			else if (obj.getClass().equals(Character.class)){
+				fichier.writeChar('?');
+				fichier.writeChar((Character)obj);
+			}
+			else {
+				fichier.writeChar('#');
+				fichier.writeInt((Integer)obj);
+			}
+		}
+		fichier.writeChar('&');
+		
 	}
 
 }
