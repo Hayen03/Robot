@@ -23,10 +23,15 @@ public class Programme {
 	}
 	
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException{
-		if (!adresse.endsWith(".prc")) throw new FichierIncorrectException("Fichier invalide");
-		ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
-		_instructions = (Instruction[])fichier.readObject();
-		fichier.close();
+		if (adresse.endsWith(".pr")){
+			_instructions = Compilateur.compileFichier(adresse);
+		}
+		else if (!adresse.endsWith(".prc")) throw new FichierIncorrectException("Fichier invalide");
+		else{
+			ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
+			_instructions = (Instruction[])fichier.readObject();
+			fichier.close();
+		}
 		
 		_variables = new Hashtable<String, Integer>();
 		_ligne = 0;

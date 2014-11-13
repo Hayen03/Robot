@@ -44,6 +44,26 @@ public class Main {
 			System.out.println("compilation terminée");
 
 		}
+		else if (args[0].equals("run")){
+			Programme p;
+			try {
+				p = new Programme(args[1]);
+			} catch (IOException e) {
+				System.err.println("Erreur lors de la lecture du fichier");
+				e.printStackTrace();
+				return;
+			} catch (ArrayIndexOutOfBoundsException e){
+				System.err.println("L'adresse du fichier est absente");
+				return;
+			} catch (FichierIncorrectException e){
+				System.err.println("Extension du fichier incorecte (requiert .pr/.prc)");
+				return;
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+				return;
+			}
+			p.executer();
+		}
 	}
 
 	public static void test(){
