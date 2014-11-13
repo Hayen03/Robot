@@ -13,20 +13,22 @@ public class Fin extends Instruction {
 		_indentation = ind;
 	}
 	
+	@Override
 	public boolean run(Programme p){
 		return p.getIndentation() == _indentation;
 	}
 	
+	@Override
 	public String toString(){
 		return "End: (" + _indentation + ")";
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 		fichier.writeByte(Instruction.type.fin.numero);
 		fichier.writeChar('#');
 		fichier.writeInt(_indentation);
 		fichier.writeChar('&');
 	}
-	
+	*/
 }

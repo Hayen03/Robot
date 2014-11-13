@@ -76,13 +76,14 @@ public class Assigner extends Instruction {
 		return s;
 	}
 	
+	@Override
 	public String toString(){
 		String s = "Assign: ";
 		for (String n : _ids) s += n + ", ";
 		return s;
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 		fichier.writeByte(Instruction.type.assigner.numero);
 		fichier.writeChar('#');
@@ -109,5 +110,5 @@ public class Assigner extends Instruction {
 		}
 		fichier.writeChar('&');
 	}
-
+*/
 }

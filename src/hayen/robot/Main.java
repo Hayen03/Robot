@@ -1,5 +1,6 @@
 package hayen.robot;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JOptionPane;
@@ -12,7 +13,7 @@ import hayen.robot.programme.instruction.Instruction;
 public class Main {
 
 	public static void main(String[] args) {
-		if (args.length == 0) test();
+		if (args.length == 0) test2();
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
 			Instruction[] instructions;
 			try {
@@ -28,7 +29,7 @@ public class Main {
 				System.err.println("Extension du premier fichier incorecte (requiert .pr)");
 				return;
 			}
-			
+
 			try {
 				Compilateur.compileVersFichier(args[2], instructions);
 			} catch (IOException e) {
@@ -39,25 +40,82 @@ public class Main {
 				System.err.println("L'adresse du fichier final est absente");
 				return;
 			}
-			
+
 			System.out.println("compilation terminée");
-			
+
 		}
 	}
-	
+
 	public static void test(){
-		Programme p = null;
-		String adresse = JOptionPane.showInputDialog("Entrez l'adresse du fichier");
-		try{
-			p = new Programme(Compilateur.compileFichier(adresse));
-		} catch(IOException e){
-			System.err.println("Erreur lors de la lecture du fichier");
+		String adresseEntree = JOptionPane.showInputDialog("Entrez l'adresse d'entrée");
+		String adresseSortie = JOptionPane.showInputDialog("Entrez l'adress de sortie");
+		Instruction[] insts;
+
+		try {
+			insts = Compilateur.compileFichier(adresseEntree);
+		} catch (IOException e) {
 			e.printStackTrace();
-			System.exit(-1);
-		} catch (FichierIncorrectException e){
-			
+			return;
+		} catch (FichierIncorrectException e) {
+			System.err.println("fichier invalide");
+			return;
 		}
-		if (p != null) p.executer();
+
+		try {
+			Compilateur.compileVersFichier(adresseSortie, insts);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+
+	}
+
+	public static void test2(){
+		String adresse = JOptionPane.showInputDialog("Entrez l'adresse"); // /Users/Hayen/Desktop/premier.prc
+		Programme p;
+
+
+		try {
+			p = new Programme(adresse);
+		} catch (FileNotFoundException e) {
+			System.err.println("Ficher non-trouvé");
+			return;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		} catch (FichierIncorrectException e) {
+			System.err.println("fichier invalde");
+			return;
+		}
+
+		p.printInstruction();
+		p.executer();
+
+	}
+
+	public static void test3(){
+		String adresse = JOptionPane.showInputDialog("Entrez l'adresse"); // /Users/Hayen/Desktop/premier.pr
+		Programme p;
+
+		try {
+			p = new Programme(Compilateur.compileFichier(adresse));
+		} catch (FileNotFoundException e) {
+			System.err.println("Ficher non-trouvé");
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		} catch (FichierIncorrectException e) {
+			System.err.println("fichier invalde");
+			return;
+		}
+
+		p.executer();
+		p.printInstruction();
+
 	}
 
 }

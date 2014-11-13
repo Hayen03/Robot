@@ -20,16 +20,17 @@ public class Sinon extends Instruction {
 
 	public int getIndentation(){ return _indentation; }
 	
+	@Override
 	public String toString(){
 		return "Else: (" + _indentation + ")";
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte((byte)Instruction.type.sinon.numero);
+		fichier.writeByte(Instruction.type.sinon.numero);
 		fichier.writeChar('#');
 		fichier.writeInt(_indentation);
 		fichier.writeChar('&');
 	}
-	
+	*/
 }

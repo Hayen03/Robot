@@ -19,16 +19,17 @@ public class Boucle extends Instruction {
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		return "Boucle: go to " + _ln;
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 		fichier.writeByte(Instruction.type.boucle.numero);
 		fichier.writeChar('#');
 		fichier.writeInt(_ln);
 		fichier.writeChar('&');
 	}
-
+*/
 }

@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-
+import java.io.ObjectOutputStream;
 import java.util.Vector;
 
 public class Compilateur {
@@ -73,10 +73,15 @@ public class Compilateur {
 	}
 	
 	public static void compileVersFichier(String adresse, Instruction... instructions) throws IOException{
-		DataOutputStream fichier = new DataOutputStream(new FileOutputStream(adresse));
+		
+/*		DataOutputStream fichier = new DataOutputStream(new FileOutputStream(adresse));
 		for (Instruction i : instructions){
 			i.enregistrer(fichier);
 		}
+*/
+		
+		ObjectOutputStream fichier = new ObjectOutputStream(new FileOutputStream(adresse));
+		fichier.writeObject(instructions);
 		fichier.close();
 	}
 

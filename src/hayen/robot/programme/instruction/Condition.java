@@ -65,11 +65,12 @@ public class Condition extends Instruction {
 		return _indentation;
 	}
 	
+	@Override
 	public String toString(){
 		return "Condition: (" + _indentation + ")"; 
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 		fichier.writeByte(Instruction.type.condition.numero);
 		fichier.writeChar('#');
@@ -93,5 +94,5 @@ public class Condition extends Instruction {
 		fichier.writeChar('&');
 		
 	}
-
+*/
 }

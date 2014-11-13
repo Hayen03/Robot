@@ -19,13 +19,14 @@ public class Declarer extends Instruction {
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		String n = "";
 		for (String s : _nom) n += s + ", ";
 		return "Declaration: " + n;
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 		fichier.writeByte(Instruction.type.declarer.numero);
 		fichier.writeChar('#');
@@ -36,5 +37,5 @@ public class Declarer extends Instruction {
 		}
 		fichier.writeChar('&');
 	}
-
+*/
 }

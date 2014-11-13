@@ -35,13 +35,14 @@ public class Afficher extends Instruction {
 		return true;
 	}
 	
+	@Override
 	public String toString(){
 		String s = "Print: ";
 		for (String e : _expression) s += e + ", ";
 		return s; 
 	}
 
-	@Override
+/*	@Override
 	public void enregistrer(DataOutputStream fichier) throws IOException {
 			fichier.writeByte(Instruction.type.afficher.numero);
 			for (String str : _expression){
@@ -50,6 +51,6 @@ public class Afficher extends Instruction {
 			}
 			fichier.writeChar('&');;
 	}
-
+*/
 }
 

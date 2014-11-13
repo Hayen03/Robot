@@ -4,8 +4,9 @@ import hayen.robot.programme.Programme;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
-public abstract class Instruction {
+public abstract class Instruction implements Serializable {
 	
 	public enum type{
 		declarer(0, Declarer.class),
@@ -32,5 +33,5 @@ public abstract class Instruction {
 	}
 	public abstract boolean run(Programme p);
 	
-	public abstract void enregistrer(DataOutputStream fichier) throws IOException;
+//	public abstract void enregistrer(DataOutputStream fichier) throws IOException;
 }

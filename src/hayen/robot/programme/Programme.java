@@ -1,9 +1,13 @@
 package hayen.robot.programme;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.util.Hashtable;
-import hayen.robot.programme.instruction.*;
 
-import hayen.robot.programme.instruction.Instruction;
+import hayen.robot.programme.instruction.*;
 
 public class Programme {
 	private Instruction[] _instructions; // la liste d'instruction
@@ -13,6 +17,17 @@ public class Programme {
 	
 	public Programme(Instruction[] instructions){
 		_instructions = instructions;
+		_variables = new Hashtable<String, Integer>();
+		_ligne = 0;
+		_indentation = 0;
+	}
+	
+	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException{
+		if (!adresse.endsWith(".prc")) throw new FichierIncorrectException("Fichier invalide");
+		ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
+		_instructions = (Instruction[])fichier.readObject();
+		fichier.close();
+		
 		_variables = new Hashtable<String, Integer>();
 		_ligne = 0;
 		_indentation = 0;
@@ -79,6 +94,10 @@ public class Programme {
 	
 	public int getIndentation(){
 		return _indentation;
+	}
+	
+	public void printInstruction(){
+		for (Instruction i : _instructions) System.out.println(i);
 	}
 	
 }
