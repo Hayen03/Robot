@@ -3,7 +3,7 @@ package hayen.robot.programme.instruction;
 //import java.io.DataOutputStream;
 //import java.io.IOException;
 
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Bloc;
 
 public class Sinon extends Instruction {
 	
@@ -16,8 +16,8 @@ public class Sinon extends Instruction {
 	}
 	
 	@Override
-	public boolean run(Programme p) {
-		return p.getIndentation() == _indentation;
+	public boolean executer(Object... params) {
+		return ((Bloc)params[0]).getIndentation() == _indentation;
 	}
 
 	public int getIndentation(){ return _indentation; }
@@ -27,12 +27,4 @@ public class Sinon extends Instruction {
 		return "Else: (" + _indentation + ")";
 	}
 
-/*	@Override
-	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte(Instruction.type.sinon.numero);
-		fichier.writeChar('#');
-		fichier.writeInt(_indentation);
-		fichier.writeChar('&');
-	}
-	*/
 }

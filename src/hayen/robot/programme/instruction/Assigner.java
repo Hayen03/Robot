@@ -1,9 +1,6 @@
 package hayen.robot.programme.instruction;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
-
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Bloc;
 
 public class Assigner extends Instruction {
 	
@@ -18,8 +15,10 @@ public class Assigner extends Instruction {
 	}
 
 	@Override
-	public boolean run(Programme p) {
+	public boolean executer(Object... params){
+		Bloc p = (Bloc)params[0];
 		
+		// si il n'y a qu'un terme, on assigne sa valeur aux variables appropriés
 		if (_termes.length == 1){
 			Integer v;
 			if (_termes[0].getClass().equals(String.class)) v = p.getVariable((String)_termes[0]);
@@ -35,8 +34,6 @@ public class Assigner extends Instruction {
 						int v;
 						if (t.getClass().equals(String.class)) v = p.getVariable((String)t);
 						else v = (Integer)t;
-//						stack[0] = stack[1];
-//						stack[1] = v;
 						stack = push(v, stack);
 					}
 					else{ // si c'est un operateur
@@ -60,8 +57,6 @@ public class Assigner extends Instruction {
 							break;
 						}
 						
-//						stack[0] = stack[1];
-//						stack[1] = resultat;
 						stack = push(resultat, stack);
 					}
 				}
@@ -85,32 +80,4 @@ public class Assigner extends Instruction {
 		return s;
 	}
 
-/*	@Override
-	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte(Instruction.type.assigner.numero);
-		fichier.writeChar('#');
-		fichier.writeInt(_ids.length);
-		for (String str : _ids){
-			fichier.writeChar('$');
-			fichier.writeUTF(str);
-		}
-		fichier.writeChar('#');
-		fichier.writeInt(_termes.length);
-		for (Object obj : _termes){
-			if (obj.getClass().equals(String.class)){
-				fichier.writeChar('$');
-				fichier.writeUTF((String)obj);
-			}
-			else if (obj.getClass().equals(Character.class)){
-				fichier.writeChar('?');
-				fichier.writeChar((Character)obj);
-			}
-			else {
-				fichier.writeChar('#');
-				fichier.writeInt((Integer)obj);
-			}
-		}
-		fichier.writeChar('&');
-	}
-*/
 }

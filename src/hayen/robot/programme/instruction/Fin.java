@@ -1,9 +1,6 @@
 package hayen.robot.programme.instruction;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
-
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Bloc;
 
 public class Fin extends Instruction {
 	
@@ -16,7 +13,8 @@ public class Fin extends Instruction {
 	}
 	
 	@Override
-	public boolean run(Programme p){
+	public boolean executer(Object... params){
+		Bloc p = (Bloc)params[0];
 		return p.getIndentation() == _indentation;
 	}
 	
@@ -25,12 +23,4 @@ public class Fin extends Instruction {
 		return "End: (" + _indentation + ")";
 	}
 
-/*	@Override
-	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte(Instruction.type.fin.numero);
-		fichier.writeChar('#');
-		fichier.writeInt(_indentation);
-		fichier.writeChar('&');
-	}
-	*/
 }

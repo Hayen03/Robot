@@ -13,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.util.Vector;
 
 public class Compilateur {
+	
+	public static final String version = "0.2";
 
 	// liste de mots réservés
 	private static final String[] motReserve = new String[9];
@@ -23,7 +25,7 @@ public class Compilateur {
 	public static final String motAfficher = ajouterMotReserve("afficher");
 	public static final String motTourner = ajouterMotReserve("tourner");
 	public static final String motDeplacer = ajouterMotReserve("deplacer");
-	public static final String motBoucle = ajouterMotReserve("goto");
+	public static final String motBoucle = ajouterMotReserve("tantque");
 	public static final String motQuitter = ajouterMotReserve("retour");
 	public static final String motAssignation = ":";
 	public static final String motCommentaire = "#";
@@ -81,6 +83,7 @@ public class Compilateur {
 */
 		
 		ObjectOutputStream fichier = new ObjectOutputStream(new FileOutputStream(adresse));
+		fichier.writeObject(version);
 		fichier.writeObject(instructions);
 		fichier.close();
 	}
@@ -161,21 +164,14 @@ public class Compilateur {
 				inst.add(toAdd);
 //				System.out.println("" + i + ": new " + toAdd);
 			}
-			else if (first.equals(motBoucle)){ // goto
-				// syntaxe : goto <nombre>
-				if (op.length != 2 || !Util.isDigit(op[1])){
-					System.out.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
+			else if (first.equals(motBoucle)){ // tantque
+				// syntaxe : tantque <expression>
+				if (op.length < 2){
+					System.err.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
 					return null;
 				}
-				else {
-					int d = 0;
-					for (int j = i; j < texte.length; j++) if (separe(texte[j]).length == 0) d++;
-					int ln = new Integer(op[1]) - decalage - 1 - d;
-//					System.out.println("Set GOTO at ln. " + i + " to ln. " + ln);
-					Instruction toAdd = new Boucle(ln);
-					inst.add(toAdd);
-//					System.out.println("" + i + ": new " + toAdd);
-				}
+				
+				
 
 			}
 			else if (first.equals(motCondition)){ // if

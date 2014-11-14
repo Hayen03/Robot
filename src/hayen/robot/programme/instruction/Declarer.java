@@ -1,9 +1,6 @@
 package hayen.robot.programme.instruction;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
-
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Bloc;
 
 public class Declarer extends Instruction {
 	
@@ -16,7 +13,8 @@ public class Declarer extends Instruction {
 	}
 
 	@Override
-	public boolean run(Programme p) {
+	public boolean executer(Object... params){
+		Bloc p = (Bloc)params[0];
 		for (String n : _nom) p.assigner(n, 0);
 		return true;
 	}
@@ -28,16 +26,4 @@ public class Declarer extends Instruction {
 		return "Declaration: " + n;
 	}
 
-/*	@Override
-	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte(Instruction.type.declarer.numero);
-		fichier.writeChar('#');
-		fichier.writeInt(_nom.length);
-		for (String str : _nom) {
-			fichier.writeChar('$');
-			fichier.writeUTF(str);
-		}
-		fichier.writeChar('&');
-	}
-*/
 }

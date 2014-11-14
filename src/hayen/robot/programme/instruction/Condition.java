@@ -1,9 +1,6 @@
 package hayen.robot.programme.instruction;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
-
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Bloc;
 
 public class Condition extends Instruction {
 	
@@ -18,7 +15,8 @@ public class Condition extends Instruction {
 	}
 
 	@Override
-	public boolean run(Programme p) {
+	public boolean executer(Object... params){
+		Bloc p = (Bloc)params[0];
 		boolean retour = true;
 		int tmp1 = 0;
 		
@@ -31,7 +29,6 @@ public class Condition extends Instruction {
 				else tmp1 = (Integer)t1;
 			}
 			else { // si c'est un opérateur
-//				System.out.print("OPERATEUR ");
 				int tmp2 = 0;
 				Object t2 = _expression[i+1];
 				if (t2.getClass().equals(String.class)) tmp1 = p.getVariable((String)t2);
@@ -40,19 +37,13 @@ public class Condition extends Instruction {
 				char op = (Character)t1;
 				switch (op){
 				case '<':
-//					System.out.print("Evaluation... " + retour + "&" + (tmp1 < tmp2));
 					retour = retour && tmp1 < tmp2;
-//					System.out.print("; " + retour + ": "); 
 					break;
 				case '>':
-//					System.out.print("Evaluation... " + retour + "&" + (tmp1 > tmp2));
 					retour = retour && tmp1 > tmp2;
-//					System.out.print("; " + retour + ": ");
 					break;
 				case '=':
-//					System.out.print("Evaluation... " + retour + "&" + (tmp1 == tmp2));
 					retour = retour && tmp1 == tmp2;
-//					System.out.print("; " + retour + ": ");
 					break;
 				}
 				
@@ -72,29 +63,4 @@ public class Condition extends Instruction {
 		return "Condition: (" + _indentation + ")"; 
 	}
 
-/*	@Override
-	public void enregistrer(DataOutputStream fichier) throws IOException {
-		fichier.writeByte(Instruction.type.condition.numero);
-		fichier.writeChar('#');
-		fichier.writeInt(_indentation);
-		fichier.writeChar('#');
-		fichier.writeInt(_expression.length);
-		for (Object obj : _expression){
-			if (obj.getClass().equals(String.class)){
-				fichier.writeChar('$');
-				fichier.writeUTF((String)obj);
-			}
-			else if (obj.getClass().equals(Character.class)){
-				fichier.writeChar('?');
-				fichier.writeChar((Character)obj);
-			}
-			else {
-				fichier.writeChar('#');
-				fichier.writeInt((Integer)obj);
-			}
-		}
-		fichier.writeChar('&');
-		
-	}
-*/
 }

@@ -1,12 +1,10 @@
 package hayen.robot.programme.instruction;
 
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Executable;
 
-//import java.io.DataOutputStream;
-//import java.io.IOException;
 import java.io.Serializable;
 
-public abstract class Instruction implements Serializable {
+public abstract class Instruction implements Serializable, Executable {
 	
 	private static final long serialVersionUID = 2417554043198191652L;
 	
@@ -30,10 +28,4 @@ public abstract class Instruction implements Serializable {
 		
 	}
 	
-	public Instruction(){
-		
-	}
-	public abstract boolean run(Programme p);
-	
-//	public abstract void enregistrer(DataOutputStream fichier) throws IOException;
 }
