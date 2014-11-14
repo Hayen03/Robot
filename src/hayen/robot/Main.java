@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.FichierIncorrectException;
 import hayen.robot.programme.Programme;
@@ -15,7 +16,7 @@ public class Main {
 	public static void main(String[] args) {
 		if (args.length == 0) test2();
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
-			Instruction[] instructions;
+			Bloc instructions;
 			try {
 				instructions = Compilateur.compileFichier(args[1]);
 			} catch (IOException e) {
@@ -69,7 +70,7 @@ public class Main {
 	public static void test(){
 		String adresseEntree = JOptionPane.showInputDialog("Entrez l'adresse d'entrée");
 		String adresseSortie = JOptionPane.showInputDialog("Entrez l'adress de sortie");
-		Instruction[] insts;
+		Bloc insts;
 
 		try {
 			insts = Compilateur.compileFichier(adresseEntree);

@@ -12,4 +12,12 @@ public class Util {
 		return true;
 	}
 	
+	public static Object[] subArray(Object[] original, int debut, int fin){
+		Object[] retour = new Object[fin - debut];
+		for (int i = 0; i < retour.length; i++){
+			retour[i] = original[debut + i];
+		}
+		return retour;
+	}
+	
 }

@@ -6,22 +6,24 @@ public class Boucle extends Instruction {
 
 	private static final long serialVersionUID = -2859171750583912735L;
 	
-	private int _ln;
+	private Object[] _expression;
+	private Bloc _bloc;
 	
-	public Boucle(int ln){
-		_ln = ln-1;
+	public Boucle(Bloc bloc, Object... expression){
+		_expression = expression;
+		_bloc = bloc;
 	}
 	
 	@Override
 	public boolean executer(Object... params){
 		Bloc p = (Bloc)params[0];
-		p.setLigne(_ln);
+		while (Condition.comparerExpression(p, _expression)) _bloc.setParent(p).executer();
 		return true;
 	}
 	
 	@Override
 	public String toString(){
-		return "Boucle: go to " + _ln;
+		return "Boucle: while " + _expression;
 	}
 
 }

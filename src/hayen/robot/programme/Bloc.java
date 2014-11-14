@@ -10,33 +10,44 @@ public class Bloc implements Serializable, Executable {
 	protected final Instruction[] _instructions;
 	protected Hashtable<String, Integer> _variables;
 	protected int _ligne;
-	protected final int _depart;
 	protected final int _longueur;
-	protected final int _indentation;
-	protected final Bloc _parent;
+	protected Bloc _parent;
 	
 	public Bloc(Instruction... inst){
 		_instructions = inst;
 		_variables = new Hashtable<String, Integer>();
 		_ligne = 1;
-		_depart = 1;
 		_longueur = inst.length;
-		_indentation = 0;
 		_parent = null;
 	}
-	public Bloc(Bloc parent, Instruction... inst){
+	public Bloc(int indentation, Instruction[] inst){
+		_instructions = inst;
+		_parent = null;
+		_variables = new Hashtable<String, Integer>();
+		_ligne = 1;
+		_longueur = inst.length;
+	}
+	public Bloc(Bloc parent, Instruction[] inst){
 		_instructions = inst;
 		_variables = new Hashtable<String, Integer>();
 		_parent = parent;
-		_ligne = parent._depart + parent._longueur;
-		_depart = _ligne;
+		_ligne = 0;
 		_longueur = inst.length;
-		_indentation = parent._indentation + 1;
+	}
+	public Bloc(Bloc original){
+		this._instructions = original._instructions;
+		this._ligne = 1;
+		this._parent = original._parent;
+		this._variables = new Hashtable<String, Integer>();
+		this._longueur = this._instructions.length;
 	}
 
 	@Override
 	public boolean executer(Object... params) {
-		for (Instruction i : _instructions) i.executer(this);
+		for (Instruction i : _instructions){
+			i.executer(this);
+			_ligne++;
+		}
 		return true;
 	}
 	
@@ -59,12 +70,13 @@ public class Bloc implements Serializable, Executable {
 		_ligne = ln;
 	}
 	
-	public int getIndentation(){
-		return _indentation;
-	}
-	
 	public void printInstruction(){
 		for (Instruction i : _instructions) System.out.println(i);
 	}
-
+	
+	public Bloc setParent(Bloc parent){
+		_parent = parent;
+		return this;
+	}
+	
 }

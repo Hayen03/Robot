@@ -19,8 +19,12 @@ public class Programme extends Bloc{
 		super(getInstructionsFromFichier(adresse));
 	}
 	
-	private static Instruction[] getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException{
-		Instruction[] instructions;
+	public Programme(Bloc original){
+		super(original);
+	}
+	
+	private static Bloc getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException{
+		Bloc instructions;
 		if (adresse.endsWith(".pr")){
 			instructions = Compilateur.compileFichier(adresse);
 		}
@@ -28,7 +32,7 @@ public class Programme extends Bloc{
 		else{
 			ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
 			String version = fichier.readUTF();
-			if (version.equals(Compilateur.version)) instructions = (Instruction[])fichier.readObject();
+			if (version.equals(Compilateur.version)) instructions = (Bloc)fichier.readObject();
 			else{
 				fichier.close();
 				throw new FichierIncorrectException("Version trop ancienne du compilateur");
