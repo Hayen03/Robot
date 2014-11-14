@@ -2,11 +2,13 @@ package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Programme;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 import java.io.Serializable;
 
 public abstract class Instruction implements Serializable {
+	
+	private static final long serialVersionUID = 2417554043198191652L;
 	
 	public enum type{
 		declarer(0, Declarer.class),

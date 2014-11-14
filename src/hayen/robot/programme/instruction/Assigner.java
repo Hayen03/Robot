@@ -1,11 +1,13 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Programme;
 
 public class Assigner extends Instruction {
+	
+	private static final long serialVersionUID = -1252954201912565150L;
 	
 	private String[] _ids;
 	private Object[] _termes;

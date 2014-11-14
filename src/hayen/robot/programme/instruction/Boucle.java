@@ -1,12 +1,14 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Programme;
 
 public class Boucle extends Instruction {
 
+	private static final long serialVersionUID = -2859171750583912735L;
+	
 	private int _ln;
 	
 	public Boucle(int ln){

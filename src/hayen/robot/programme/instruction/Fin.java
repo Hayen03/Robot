@@ -1,11 +1,13 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Programme;
 
 public class Fin extends Instruction {
+	
+	private static final long serialVersionUID = 358290877192354208L;
 	
 	private int _indentation;
 	

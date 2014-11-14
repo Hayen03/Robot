@@ -1,12 +1,14 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Programme;
 
 public class Sinon extends Instruction {
-
+	
+	private static final long serialVersionUID = -856650277948777509L;
+	
 	private int _indentation;
 	
 	public Sinon(int ind){

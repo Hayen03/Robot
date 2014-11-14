@@ -1,11 +1,13 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Programme;
 
 public class Declarer extends Instruction {
+	
+	private static final long serialVersionUID = -3147632128806040991L;
 	
 	private String[] _nom;
 	

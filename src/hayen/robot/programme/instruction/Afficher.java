@@ -1,13 +1,15 @@
 package hayen.robot.programme.instruction;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
+//import java.io.DataOutputStream;
+//import java.io.IOException;
 
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
 public class Afficher extends Instruction {
+	
+	private static final long serialVersionUID = -1447648248726900296L;
 	
 	private String[] _expression;
 	
