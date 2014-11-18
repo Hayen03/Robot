@@ -48,6 +48,11 @@ public class Compilateur {
 	public static final String comparaisonEgal = "=";
 
 	public static final String exension = ".pr";
+	
+	public static final int blocMain = 0;
+	public static final int blocSi = 1;
+	public static final int blocSinon = 2;
+	public static final int blocBoucle = 3;
 
 	// compile un programme à partir d'un fichier .pr
 	public static Bloc compileFichier(String adresse) throws IOException, FichierIncorrectException{
@@ -73,7 +78,7 @@ public class Compilateur {
 
 		}
 		ArrayList<String> tmp = new ArrayList(lignes);
-		return compile(null, null, tmp, tmp.size());
+		return compile(blocMain, null, tmp, tmp.size());
 	}
 
 	public static void compileVersFichier(String adresse, Bloc instructions) throws IOException{
@@ -83,235 +88,7 @@ public class Compilateur {
 		fichier.close();
 	}
 
-/*	public static Bloc compile(String... texte){
-		Vector<Instruction> inst = new Vector<Instruction>();
-		Vector<String> var = new Vector<String>();
-		int indentation = 0;
-		int decalage = 0;
-
-		for (int i = 0; i < texte.length; i++){
-			String[] op = separe(texte[i].toLowerCase());
-			if (op.length == 0){
-				decalage++;
-				continue;
-			}
-
-			// l'instruction dépend du premier terme
-			String first = op[0];
-			if (first.equals(motDeclaration)){ // declaration de variable
-				//
-				// Une variable doit avoir un nom alpha numérique et respecter la syntaxe: var <nom>
-				// (pas d'assignation) + (plusieurs déclaration en même temps)
-				//
-				if (op.length >= 2){
-					Vector<String> params = new Vector<String>();
-					for (int j = 1; j < op.length; j++){
-						// envoyer une erreur si le nom est invalide
-						if ( !(Character.isAlphabetic(op[j].charAt(0)) && Util.isAlphaNumeric(op[j])) ){
-							System.out.println("ERREUR: nom de variable invalide\n" + "ln." + (i+1));
-							return null;
-						}
-						// envoyer une erreur si l'identificateur existe déjà
-						else if (var.contains(op[j])){
-							//bla bla bla
-							System.out.println("ERREUR: la variable <" + op[j] + "> a déjà été déclarée\n" + "ln." + (i+1));
-							return null;
-						}
-						else {
-							var.add(op[j]);
-							params.add(op[j]);
-						}
-					}
-					Instruction toAdd = new Declarer(params.toArray(new String[params.size()]));
-					inst.add(toAdd);
-					//					System.out.println("" + i + ": new " + toAdd);
-				}
-				else{
-					System.out.println("ERREUR: expression invalide (une déclaration doit être fait sous la forme: var <nom>)\n" + "ln." + (i+1));
-					return null;
-				}
-			}
-			else if (first.equals(motAfficher)){ // affichage (afficher ...)
-				// la seule chose à vérifier ici, c'est si les variables référencées existe
-				String[] param = new String[op.length-1];
-				for (int j = 1; j < op.length; j++){
-					// une variable serait ce qui n'est pas composé seulement de chiffre, et on ne veut pas afficher de mot réservé
-					// et je ne permet malheureusement pas encore les expression lors de l'affichage (print(3 + 5))
-					String m = op[j];
-					if (!Util.isDigit(m)){
-						if (isMotReserve(m)){
-							System.out.println("ERREUR: Il est impossible d'afficher un mot reservé\n" + "ln." + (i+1));
-							return null;
-						}
-						else if (!(Util.isAlphaNumeric(m) || motCaractere.equals(m))){
-							System.out.println("ERREUR: Caractère invalide\n" + "ln." + (i+1));
-							return null;
-						}
-						else if (!(var.contains(m) || motCaractere.equals(m))){
-							System.out.println("ERREUR: variable non déclaré\n" + "ln." + (i+1));
-							return null;
-						}
-						// si toutes ces étapes sont passé, le terme est correcte
-					}
-					param[j-1] = op[j];
-				}
-				Instruction toAdd = new Afficher(param);
-				inst.add(toAdd);
-				//				System.out.println("" + i + ": new " + toAdd);
-			}
-			else if (first.equals(motBoucle)){ // tantque
-				// syntaxe : tantque <expression>
-				if (op.length < 2){
-					System.err.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
-					return null;
-				}
-
-
-
-			}
-			else if (first.equals(motCondition)){ // if
-				indentation++; // le nombre d'indentation augmente
-				// doit avoir plus de 1 parametre
-				if (op.length < 2){
-					System.out.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
-					return null;
-				}
-
-				// liste des choses qui vont être passé en paramètre (variable, nombre et opérateur logique/comparaison)(en alternance, débute et se termine par une valeur)
-				Vector<Object> params = new Vector<Object>();
-
-				for (int j = 1; j < op.length; j++){
-					String terme = op[j];
-
-					if (comparaison.contains(terme)){ // si c'est un opérateur
-						params.add(terme.charAt(0));
-					}
-					else if (Util.isDigit(terme)) { // si c'est un nombre
-						params.add(new Integer(terme));
-					}
-					else { // si c'est un identificateur
-						if (!var.contains(terme)){ // si elle est non déclaré
-							System.out.println("ERREUR: variable non déclaré\n" + "ln." + (i+1));
-							return null;
-						}
-						params.add(terme);
-					}
-				}
-				Instruction toAdd = new Condition(indentation, params.toArray());
-				inst.add(toAdd);
-				//				System.out.println("" + i + ": new " + toAdd);
-
-			}
-			else if (first.equals(motSinon)){ // else
-				// n'a pas de parametre et doit être dans un bloc if (indentation >= 1)
-				if (op.length > 1 || indentation < 1){
-					System.out.println("ERREUR: Expression invalide\n" + "ln." + (i+1));
-					return null;
-				}
-				Instruction toAdd = new Sinon(indentation);
-				inst.add(toAdd);
-				//				System.out.println("" + i + ": new " + toAdd);
-			}
-			else if (first.equals(motFin)){
-				if (indentation < 0){ // si le bloc d'indentation est plus petit que zéro, il y a une erreur
-					System.out.println("ERREUR: Symbole fin en trop\n" + "ln." + (i+1));
-					return null;
-				}
-				Instruction toAdd = new Fin(indentation);
-				inst.add(toAdd);
-				//				System.out.println("" + i + ": new " + toAdd);
-				indentation--;
-			}
-			else if (first.equals(motDeplacer)){ // deplacement
-
-			}
-			else if (first.equals(motTourner)){ // tourner
-
-			}
-			else{ // assignation
-				// on peut assigner plusieurs variable en même temps
-				// syntaxe: <identificateurs> : <expression>
-
-				Vector<String> ids = new Vector<String>(); // les identificateurs
-				Vector<Object> terme = new Vector<Object>(); // les termes de l'expression (String: variable, int: nombre, char: operateur)
-				int j = 0;
-
-				// trouver les identificateurs
-				for (; j < op.length; j++){
-					if (op[j].equals(motAssignation)){
-						if (j == 0){ // si le premier terme est le signe d'assignation, il y a un problème
-							System.out.println("ERREUR: aucun identificateur trouvé pour l'assignation\nln." + (i+1));
-							return null;
-						}
-						j++;
-						break; // sinon, on a terminer de chercher les identificateurs
-					}
-					else if (!var.contains(op[j])){ // l'identificateur n'existe pas
-						System.out.println("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (i+1));
-						return null;
-					}
-					else {
-						ids.add(op[j]);
-					}
-				}
-
-				for (; j < op.length; j++){
-					if (operateur.contains(op[j])){ // opperateur
-						terme.add(new Character(op[j].charAt(0)));
-					}
-					else if (Util.isDigit(op[j])){ // nombre
-						terme.add(new Integer(op[j]));
-					}
-					else if (var.contains(op[j])){ // variable existante
-						terme.add(op[j]);
-					}
-					else{ // variable non-existante
-						System.out.println("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (i+1));
-						return null;
-					}
-				}
-
-				// s'il n'y a plus de mots, il y a une erreur (EX: bla : )
-				if (terme.size() == 0){
-					System.out.println("ERREUR: aucune expression pour l'assignation\nln." + (i+1));
-					return null;
-				}
-
-				// vérifier l'ordre des termes (valeur opérateur valeur... ou valeur valeur operateur valeur operateur... (ce mode daoit avoir absolument un minimum de trois termes))
-				if (terme.get(0).getClass().equals(Character.class)){ // vérification du premier terme (doit être une valeur)
-					System.out.println("ERREUR: premier terme de l'assignation invalide\nln." + (i+1));
-					return null;
-				}
-				if (terme.size() >= 2){ // cas ou il y a plusieurs termes
-					if (!terme.get(terme.size()-1).getClass().equals(Character.class)){ // si il y a plus de 1 terme et que le dernier est une valeur, il y a erreur
-						System.out.println("ERREUR: expression invalide\nln." + (i+1));
-						return null;
-					}
-					boolean operateur = terme.get(1).getClass().equals(Character.class); // indique si le terme précédent est un operateur
-					for (j = 2; j < terme.size(); j++){
-						if (terme.get(j).getClass().equals(Character.class) == operateur){
-							System.out.println("ERREUR: expression invalide\nln." + (i+1));
-							return null;
-						}
-					}
-				}
-				Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme.toArray());
-				inst.add(toAdd);
-				//				System.out.println("" + i + ": new " + toAdd);
-			}
-
-		}
-
-		if (indentation > 0){
-			System.out.println("ERREUR: bloc d'opération incorrecte");
-			return null;
-		}
-
-		return inst.toArray(new Instruction[inst.size()]);
-	}
-*/
-
-	private static Bloc compile(Bloc parent, Vector<String> preVar, ArrayList<String> texte, int taille){
+	private static Bloc compile(int typeBloc, Vector<String> preVar, ArrayList<String> texte, int taille){
 		Vector<Instruction> instructions = new Vector<Instruction>();
 		Vector<String> var = preVar != null ? (Vector<String>)preVar.clone() : new Vector<String>();
 		Bloc retour;
@@ -384,7 +161,7 @@ public class Compilateur {
 			}
 
 			else if (premierMot.equals(motBoucle)){
-
+				
 			}
 
 			else if (premierMot.equals(motCondition)){
@@ -414,7 +191,8 @@ public class Compilateur {
 				}
 
 				// 2. Trouver le bloc à executer si la condition est vrai
-				Bloc blocSi = compile(null, var, texte, taille);
+				texte.remove(0);
+				Bloc blocSi = compile(Compilateur.blocSi, var, texte, taille);
 				if (texte.size() < 1){ // si il n'y a rien après le bloc-si, c'est une erreur
 					System.out.println("ERREUR: 'fin' manquant à la fin de la condition\n" + "ln." + (i+1));
 					return null;
@@ -425,7 +203,7 @@ public class Compilateur {
 				if (l[0].equals(motSinon) && l.length == 1){
 					
 					// 3.1 compiler le bloc à executer si la condition est fausse
-					Bloc blocSinon = compile(null, var, texte, taille);
+					Bloc blocSinon = compile(Compilateur.blocSinon, var, texte, taille);
 					
 					// 3.2 Vérifier qu'un 'fin' est à la fin du bloc
 					if (texte.size() < 1){
@@ -454,12 +232,21 @@ public class Compilateur {
 			}
 
 			else if (premierMot.equals(motSinon)){
-				retour = new Bloc(parent, instructions.toArray(new Instruction[instructions.size()]));
+				if (typeBloc != Compilateur.blocSi){
+					System.out.println("ERREUR: Instruction invalide\n" + "ln." + (i+1));
+					return null;
+				}
+				retour = new Bloc(instructions.toArray(new Instruction[instructions.size()]));
 				return retour;
 			}
 
 			else if (premierMot.equals(motFin)){
-
+				if (inst.length != 1){
+					System.out.println("ERREUR: Instruction invalide\n" + "ln." + (i+1));
+					return null;
+				}
+				retour = new Bloc(instructions.toArray(new Instruction[instructions.size()]));
+				return retour;
 			}
 
 			else { // assignation
@@ -541,7 +328,7 @@ public class Compilateur {
 			texte.remove(0);
 		}
 
-		return null;
+		return new Bloc(instructions.toArray(new Instruction[instructions.size()]));
 	}
 
 	public static String[] separe(String texte){
