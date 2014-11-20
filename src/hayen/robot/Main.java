@@ -8,13 +8,14 @@ import javax.swing.JOptionPane;
 import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.FichierIncorrectException;
+import hayen.robot.programme.OperationInvalideException;
 import hayen.robot.programme.Programme;
-import hayen.robot.programme.instruction.Instruction;
 
 public class Main {
 
 	public static void main(String[] args) {
 		if (args.length == 0) test2();
+		
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
 			Bloc instructions;
 			try {
@@ -28,6 +29,9 @@ public class Main {
 				return;
 			} catch (FichierIncorrectException e){
 				System.err.println("Extension du premier fichier incorecte (requiert .pr)");
+				return;
+			} catch (OperationInvalideException e) {
+				e.printStackTrace();
 				return;
 			}
 
@@ -62,6 +66,9 @@ public class Main {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 				return;
+			} catch (OperationInvalideException e) {
+				e.printStackTrace();
+				return;
 			}
 			p.executer();
 		}
@@ -79,6 +86,9 @@ public class Main {
 			return;
 		} catch (FichierIncorrectException e) {
 			System.err.println("fichier invalide");
+			return;
+		} catch (OperationInvalideException e) {
+			e.printStackTrace();
 			return;
 		}
 
@@ -110,9 +120,12 @@ public class Main {
 		} catch (FichierIncorrectException e) {
 			System.err.println("fichier invalde");
 			return;
+		} catch (OperationInvalideException e) {
+			e.printStackTrace();
+			return;
 		}
 
-		p.printInstruction();
+//		p.printInstruction();
 		p.executer();
 
 	}
@@ -132,6 +145,9 @@ public class Main {
 		} catch (FichierIncorrectException e) {
 			System.err.println("fichier invalde");
 			return;
+		} catch (OperationInvalideException e) {
+			e.printStackTrace();
+			return;
 		}
 
 		p.executer();
@@ -139,4 +155,15 @@ public class Main {
 
 	}
 
+	public static void test4(){
+		String texte = "var ill\nafficher ill .32\nill : 6\nafficher ill";
+		try {
+			Programme p = new Programme(Compilateur.compile(texte));
+			p.executer();
+		} catch (OperationInvalideException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+	}
 }

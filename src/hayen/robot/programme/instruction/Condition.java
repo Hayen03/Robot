@@ -24,45 +24,50 @@ public class Condition extends Instruction {
 	@Override
 	public boolean executer(Object... params){
 		Bloc p = (Bloc)params[0];
-		if (comparerExpression(p, _expression)) return _blocSi.setParent(p).executer();
+//		System.out.print("<COMPARE ");
+		boolean b = comparerExpression(p, _expression);
+//		System.out.print("<" + b + ">");
+		if (b) return _blocSi.setParent(p).executer();
 		else if (_blocSinon != null) return _blocSinon.setParent(p).executer();
 		else return true;
 	}
 	
-	public static boolean comparerExpression(Bloc p, Object... expression){
+	public static boolean comparerExpression(Bloc p, Object... termes){
 		boolean retour = true;
-		int tmp1 = 0;
+		int t1, t2, i = 0;
+		char op;
+		Object buffer;
 		
-		Object t1;
-		int i = 0;
-		while (i < expression.length){
-			t1 = expression[i];
-			if (!t1.getClass().equals(Character.class)){ // si c'est une valeur
-				if (t1.getClass().equals(String.class)) tmp1 = p.getVariable((String)t1);
-				else tmp1 = (Integer)t1;
+		buffer = termes[i++];
+		if (buffer.getClass().equals(Integer.class))
+			t1 = (Integer)buffer;
+		else
+			t1 = p.getVariable((String)buffer);
+		
+		do{
+			op = (Character)termes[i++];
+			
+			buffer = termes[i++];
+			if (buffer.getClass().equals(Integer.class))
+				t2 = (Integer)buffer;
+			else
+				t2 = p.getVariable((String)buffer);
+			
+			switch (op){
+			case '<':
+				retour = retour && (t1 < t2);
+				break;
+			case '>':
+				retour = retour && (t1 > t2);
+				break;
+			case '=':
+				retour = retour && (t1 == t2);
+				break;
 			}
-			else { // si c'est un opérateur
-				int tmp2 = 0;
-				Object t2 = expression[i+1];
-				if (t2.getClass().equals(String.class)) tmp1 = p.getVariable((String)t2);
-				else tmp2 = (Integer)t2;
-				
-				char op = (Character)t1;
-				switch (op){
-				case '<':
-					retour = retour && tmp1 < tmp2;
-					break;
-				case '>':
-					retour = retour && tmp1 > tmp2;
-					break;
-				case '=':
-					retour = retour && tmp1 == tmp2;
-					break;
-				}
-				
-			}
-			i++;
-		}
+			
+			t1 = t2;
+		} while (i < termes.length);
+		
 		return retour;
 	}
 	

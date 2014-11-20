@@ -1,5 +1,7 @@
 package hayen.robot.util;
 
+import java.util.ArrayList;
+
 public class Util {
 	
 	public static boolean isDigit(String str){
@@ -12,10 +14,10 @@ public class Util {
 		return true;
 	}
 	
-	public static Object[] subArray(Object[] original, int debut, int fin){
-		Object[] retour = new Object[fin - debut];
-		for (int i = 0; i < retour.length; i++){
-			retour[i] = original[debut + i];
+	public static <T> ArrayList<T> subArray(T[] original, int debut, int fin){
+		ArrayList<T> retour = new ArrayList<T>();
+		for (int i = 0; i < fin - 1; i++){
+			retour.add(original[debut + i]);
 		}
 		return retour;
 	}
