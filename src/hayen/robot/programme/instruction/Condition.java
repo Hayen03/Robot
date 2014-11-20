@@ -33,6 +33,16 @@ public class Condition extends Instruction {
 	}
 	
 	public static boolean comparerExpression(Bloc p, Object... termes){
+		
+		if (termes.length == 1){
+			int val;
+			if (termes[0].getClass().equals(Integer.class))
+				val = (Integer)termes[0];
+			else
+				val = p.getVariable((String)termes[0]);
+			return val > 0;
+		}
+		
 		boolean retour = true;
 		int t1, t2, i = 0;
 		char op;

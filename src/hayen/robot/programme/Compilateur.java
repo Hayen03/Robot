@@ -190,7 +190,54 @@ public class Compilateur {
 
 			/* ---------------------------------------------------- BOUCLE ----------------------------------------------- */
 			else if (premierMot.equals(motBoucle)){
+				// le début est très semblable à si c'était une condition
+				if (inst.length < 2) 
+					throw new OperationInvalideException("ERREUR: Expression invalide\n" + "ln." + (i+1));
+
+				// 1. Vérifier si la condition est correcte
+				// 1.1 Vérifier que les termes sont légals
+				Vector<Object> termes = new Vector<Object>(); // termes de la condition
+				for (int j = 1; j < inst.length; j++){
+					String terme = inst[j];
+					
+					// si c'est un opérateur
+					if (comparaison.contains(terme)) termes.add(terme.charAt(0));
+					// si c'est un nombre
+					else if (Util.isDigit(terme)) termes.add(new Integer(terme));
+					// si c'est un identificateur non déclaré
+					else if (!var.contains(terme)) 
+						throw new OperationInvalideException("ERREUR: variable non déclaré\n" + "ln." + (i+1));
+					else termes.add(terme);
+				}
+				// 1.2 Vérifier que les termes sont dans l'ordre
+				if (termes.get(0).getClass().equals(Character.class) || termes.get(termes.size() - 1).getClass().equals(Character.class))
+					throw new OperationInvalideException("ERREUR: une condition ne peut commencer ou finir par un operateur\nln." + (i+1));
+				// les termes doivent s'enchainer de la manière suivante v o v o v o v o v...
+				boolean valeur = true;
+				for (Object t : termes.toArray()){
+					boolean isOp = t.getClass().equals(Character.class);
+					if (isOp == valeur)
+						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (i+1));
+					valeur = !valeur;
+				}
 				
+				// 2. Trouver le bloc à executer dans la boucle
+				texte.remove(0);
+				Bloc bloc = compile(Compilateur.blocBoucle, var, texte, taille);
+				// si il n'y a rien après le bloc, c'est une erreur
+				if (texte.size() < 1) 
+					throw new OperationInvalideException("ERREUR: 'fin' manquant à la fin de la condition\n" + "ln." + (i+1));
+				
+				// 3. Vérifier si un fin est à la suite
+				String[] l = separe(texte.get(0), i);
+				if (l[0].equals(motFin) && l.length == 1){
+					texte.remove(0);
+					instructions.add(new Boucle(bloc, termes.toArray()));
+				}
+				
+				// 4. les autres cas sont des erreurs
+				else
+					throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
 			}
 
 			/* ---------------------------------------------------- CONDITION ----------------------------------------------- */
@@ -254,7 +301,6 @@ public class Compilateur {
 				
 				// 4. Est-ce un 'fin'
 				else if (l[0].equals(motFin) && l.length == 1){
-					texte.remove(0);
 					instructions.add(new Condition(blocSi, termes.toArray()));
 				}
 				
