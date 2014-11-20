@@ -18,7 +18,7 @@ public class Assigner extends Instruction {
 	public boolean executer(Object... params){
 		Bloc p = (Bloc)params[0];
 		
-		// si il n'y a qu'un terme, on assigne sa valeur aux variables appropriés
+		// si il n'y a qu'un terme, on assigne sa valeur aux variables appropriï¿½s
 		if (_termes.length == 1){
 			Integer v;
 			if (_termes[0].getClass().equals(String.class)) v = p.getVariable((String)_termes[0]);
@@ -26,8 +26,11 @@ public class Assigner extends Instruction {
 			for (String id : _ids) p.assigner(id, v);
 		}
 		else{
+			int[] nouvelleValeur = new int[_ids.length];
+			
 			int[] stack = new int[2];
-			for (String id : _ids){
+			for (int i = 0; i < _ids.length; i++){
+				String id = _ids[i];
 				stack[0] = stack[1] = p.getVariable(id);
 				for (Object t : _termes){
 					if (!t.getClass().equals(Character.class)){ // si c'est une valeur
@@ -60,8 +63,9 @@ public class Assigner extends Instruction {
 						stack = push(resultat, stack);
 					}
 				}
-				p.assigner(id, stack[1]);
+				nouvelleValeur[i] = stack[1];
 			}
+			for (int i = 0; i < _ids.length; i++) p.assigner(_ids[i], nouvelleValeur[i]);
 		}
 		
 		return true;
