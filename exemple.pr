@@ -1,0 +1,56 @@
+# ceci est un commentaire
+# this is a comment
+
+# declarer une variable
+# declaring a variable
+var x
+
+# assigner une valeur a une variable
+# assign a value to a variable
+x : 3
+x : 34+6*
+
+# plusieurs variable peuvent etre declarer et assigner en meme temps
+# more than one variable can be declared and assigned at a time
+var i j
+i j : 7
+
+# afficher une valeur
+# print a value
+afficher 13
+afficher x
+
+# un point placer avant la valeur l'affiche en temps que caractere
+# a dot placed before a value print it's character equivalent
+afficher .10 .104.101.108.108.111 .32 .119.111.114.108.100 .10
+# affiche "hello world"
+# print "hello world"
+
+# condition
+# if statement
+x : 1
+si x < 1
+	afficher 1
+fin
+si x > 1
+	afficher 2
+fin
+si x = 1
+	afficher 3
+fin
+
+# sinon
+# else statement
+si x < 1
+	afficher 1
+sinon
+	afficher 4
+fin
+
+# boucle tant que
+# while loop
+x : 3
+tantque x > 0
+	afficher .10 x
+	x : 1-
+fin

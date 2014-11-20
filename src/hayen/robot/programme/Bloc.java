@@ -59,10 +59,16 @@ public class Bloc implements Serializable, Executable {
 	}
 	
 	public void assigner(String id, int valeur){
-		_variables.put(id, valeur);
+		if (_variables.contains(id) || _parent == null)
+			_variables.put(id, valeur);
+		else
+			_parent.assigner(id, valeur);
 	}
 	public void assigner(String id, Integer valeur){
-		_variables.put(id, valeur);
+		if (_variables.contains(id) || _parent == null)
+			_variables.put(id, valeur);
+		else 
+			_parent.assigner(id, valeur);
 	}
 	
 	public int getLigne() { return _ligne; }

@@ -231,7 +231,6 @@ public class Compilateur {
 				// 3. Vérifier si un fin est à la suite
 				String[] l = separe(texte.get(0), i);
 				if (l[0].equals(motFin) && l.length == 1){
-					texte.remove(0);
 					instructions.add(new Boucle(bloc, termes.toArray()));
 				}
 				
