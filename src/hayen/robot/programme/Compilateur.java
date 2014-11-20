@@ -46,7 +46,7 @@ public class Compilateur {
 	public static final String comparaisonEgal = "=";
 
 	public static final String exension = ".pr";
-	
+
 	public static final int blocMain = 0;
 	public static final int blocSi = 1;
 	public static final int blocSinon = 2;
@@ -107,13 +107,13 @@ public class Compilateur {
 	public static Bloc compile(ArrayList<String> programme) throws OperationInvalideException{
 		return compile(blocMain, null, programme, programme.size());
 	}
-	
+
 	public static Bloc compile(String programme) throws OperationInvalideException {
 		ArrayList<String> tmp = new ArrayList<String>();
 		for (String s : programme.split("\n")) tmp.add(s);
 		return compile(0, null, tmp, tmp.size());
 	}
-	
+
 	/**
 	 * compile une liste de String représentant des instructions afin de former un programme executable
 	 * @param typeBloc : Le type de bloc qui doit être compilé. Les constantes de la classe Compilateur blocMain, blocSi, blocSinon et blocBoucle sont recommendé
@@ -160,7 +160,7 @@ public class Compilateur {
 				Instruction toAdd = new Afficher(param);
 				instructions.add(toAdd);
 			}
-			
+
 			/* ---------------------------------------------------- DECLARATION ----------------------------------------------- */
 			else if (premierMot.equals(motDeclaration)){
 				/*
@@ -199,7 +199,7 @@ public class Compilateur {
 				Vector<Object> termes = new Vector<Object>(); // termes de la condition
 				for (int j = 1; j < inst.length; j++){
 					String terme = inst[j];
-					
+
 					// si c'est un opérateur
 					if (comparaison.contains(terme)) termes.add(terme.charAt(0));
 					// si c'est un nombre
@@ -220,20 +220,20 @@ public class Compilateur {
 						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (i+1));
 					valeur = !valeur;
 				}
-				
+
 				// 2. Trouver le bloc à executer dans la boucle
 				texte.remove(0);
 				Bloc bloc = compile(Compilateur.blocBoucle, var, texte, taille);
 				// si il n'y a rien après le bloc, c'est une erreur
 				if (texte.size() < 1) 
 					throw new OperationInvalideException("ERREUR: 'fin' manquant à la fin de la condition\n" + "ln." + (i+1));
-				
+
 				// 3. Vérifier si un fin est à la suite
 				String[] l = separe(texte.get(0), i);
 				if (l[0].equals(motFin) && l.length == 1){
 					instructions.add(new Boucle(bloc, termes.toArray()));
 				}
-				
+
 				// 4. les autres cas sont des erreurs
 				else
 					throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
@@ -249,7 +249,7 @@ public class Compilateur {
 				Vector<Object> termes = new Vector<Object>(); // termes de la condition
 				for (int j = 1; j < inst.length; j++){
 					String terme = inst[j];
-					
+
 					// si c'est un opérateur
 					if (comparaison.contains(terme)) termes.add(terme.charAt(0));
 					// si c'est un nombre
@@ -281,11 +281,11 @@ public class Compilateur {
 				// 3. Trouver si il y a un bloc à executer si la condition est fausse
 				String[] l = separe(texte.get(0), i);
 				if (l[0].equals(motSinon) && l.length == 1){
-					
+
 					// 3.1 compiler le bloc à executer si la condition est fausse
 					texte.remove(0);
 					Bloc blocSinon = compile(Compilateur.blocSinon, var, texte, taille);
-					
+
 					// 3.2 Vérifier qu'un 'fin' est à la fin du bloc
 					if (texte.size() < 1) 
 						throw new OperationInvalideException("ERREUR: 'fin' manquant à la fin de la condition\n" + "ln." + (i+1));
@@ -297,12 +297,12 @@ public class Compilateur {
 					else 
 						throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
 				}
-				
+
 				// 4. Est-ce un 'fin'
 				else if (l[0].equals(motFin) && l.length == 1){
 					instructions.add(new Condition(blocSi, termes.toArray()));
 				}
-				
+
 				// 5. les autres cas sont des erreurs
 				else 
 					throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
@@ -314,18 +314,18 @@ public class Compilateur {
 				// "sinon" ne peut être utilisé que dans un bloc si. Les autres cas sont des erreurs
 				if (typeBloc != Compilateur.blocSi) 
 					throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
-				
+
 				// si tout est correcte, il agit comme un fins
 				retour = new Bloc(instructions.toArray(new Instruction[instructions.size()]));
 				return retour;
 			}
-			
+
 			/* ---------------------------------------------------- FIN ----------------------------------------------- */
 			else if (premierMot.equals(motFin)){
 				// si il y a des parametre après fin, c'est une erreur
 				if (inst.length != 1) 
 					throw new OperationInvalideException("ERREUR: Instruction invalide\n" + "ln." + (i+1));
-				
+
 				// autrement, le mot fin met... fin au bloc
 				retour = new Bloc(instructions.toArray(new Instruction[instructions.size()]));
 				return retour;
@@ -349,10 +349,10 @@ public class Compilateur {
 						j++;
 						break; // sinon, on a terminer de chercher les identificateurs
 					}
-					
+
 					else if (!Util.isAlphaNumeric(inst[j])) 
 						throw new OperationInvalideException("ERREUR: identificateur invalide\nln." + (i+1));
-					
+
 					// l'identificateur n'existe pas
 					else if (!var.contains(inst[j])) 
 						throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (i+1));
@@ -363,13 +363,13 @@ public class Compilateur {
 				for (; j < inst.length; j++){
 					// operateur
 					if (operateur.contains(inst[j])) terme.add(new Character(inst[j].charAt(0)));
-					
+
 					// nombre
 					else if (Util.isDigit(inst[j])) terme.add(new Integer(inst[j]));
-					
+
 					// variable existante
 					else if (var.contains(inst[j])) terme.add(inst[j]);
-					
+
 					// variable non-existante
 					else 
 						throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (i+1));
@@ -379,27 +379,31 @@ public class Compilateur {
 				if (terme.size() == 0) 
 					throw new OperationInvalideException("ERREUR: aucune expression pour l'assignation\nln." + (i+1));
 
-				// vérifier l'ordre des termes (valeur opérateur valeur... ou valeur valeur insterateur valeur insterateur... (ce mode daoit avoir absolument un minimum de trois termes)):
-				
-				// vérification du premier terme (doit être une valeur)
-				if (terme.get(0).getClass().equals(Character.class)) 
-					throw new OperationInvalideException("ERREUR: premier terme de l'assignation invalide\nln." + (i+1));
-				// cas ou il y a plusieurs termes
-				if (terme.size() >= 2){ 
-					// si il y a plus de 1 terme et que le dernier est une valeur, il y a erreur
-					if (!terme.get(terme.size()-1).getClass().equals(Character.class)) 
-						throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
-					
-					boolean insterateur = terme.get(1).getClass().equals(Character.class); // indique si le terme précédent est un insterateur
-					for (j = 2; j < terme.size(); j++) 
-						if (terme.get(j).getClass().equals(Character.class) == insterateur) 
-							throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
+				// vérifier l'ordre des termes, si ils sont plus nombreux que 1, sinon, on ne fait que vérifier le dit terme
+				if (terme.size() == 1){
+					if (terme.get(0).getClass().equals(Character.class))
+						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (i+1));
 				}
+				else {
+					// vérification des extrémité: 0 -> valeur; -1 -> operateur
+					if (terme.get(0).getClass().equals(Character.class) && !terme.get(terme.size() - 1).getClass().equals(Character.class))
+						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (i+1));
+					// VRAIMENT vérifier l'ordre des termes (v o v o v o...), commençant par le deuxième
+					boolean valeur = !terme.get(1).getClass().equals(Character.class);
+					for (int l = 1; i < terme.size(); i++){
+						boolean isOp = terme.get(l).getClass().equals(Character.class);
+						if (valeur == isOp)
+							throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
+						else
+							valeur = !valeur;
+					}
+				}
+
 				Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme.toArray());
 				instructions.add(toAdd);
 
 			}
-			
+
 			if (texte.size() > 0)
 				texte.remove(0);
 		}
@@ -464,7 +468,7 @@ public class Compilateur {
 				}
 				// si c'est un commentaire, on quitte la boucle, ce qui va finaliser la liste de mot
 				else if (motCommentaire.equals("" + l)) break;
-				
+
 				else{ // autre cas spéciaux
 
 					// si c'est un operateur, ou un mot de comparaison, ou le mot d'assignation, on pousse le mot
@@ -519,3 +523,20 @@ public class Compilateur {
 	}
 
 }
+
+/*
+ // vérification du premier terme (doit être une valeur)
+				if (terme.get(0).getClass().equals(Character.class)) 
+					throw new OperationInvalideException("ERREUR: premier terme de l'assignation invalide\nln." + (i+1));
+				// cas ou il y a plusieurs termes
+				if (terme.size() >= 2){ 
+					// si il y a plus de 1 terme et que le dernier est une valeur, il y a erreur
+					if (!terme.get(terme.size()-1).getClass().equals(Character.class)) 
+						throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
+
+					boolean operateur = terme.get(1).getClass().equals(Character.class); // indique si le terme précédent est un insterateur
+					for (j = 2; j < terme.size(); j++) 
+						if (terme.get(j).getClass().equals(Character.class) == operateur) 
+							throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
+				}
+ */
