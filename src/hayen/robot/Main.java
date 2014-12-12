@@ -1,10 +1,8 @@
 package hayen.robot;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.Bloc;
@@ -14,7 +12,7 @@ import hayen.robot.programme.OperationInvalideException;
 import hayen.robot.programme.Programme;
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		if (args.length == 0) test();
 		
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
@@ -75,9 +73,10 @@ public class Main {
 		}
 	}
 
-	public static void test(){
+	public static void test() throws InterruptedException{
 		
 		Grille g = new Grille();
+		Robot r = g.getRobot();
 		
 		JFrame f = new JFrame();
 		f.setTitle("TEST");
@@ -88,27 +87,79 @@ public class Main {
 		f.setLocation(10, 10);
 		f.setVisible(true);
 		
-		// oeil droit
-		g.setCaseActif(2, 3, true);
-		g.setCaseActif(3, 3, true);
-		g.setCaseActif(2, 4, true);
-		g.setCaseActif(3, 4, true);
+		r.tourner(Direction.Droite);
+		r.avancer();
+		r.avancer();
+		r.avancer();
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		r.avancer();
+		g.setCaseActif(true);
 		
-		// oeil gauche
-		g.setCaseActif(6, 3, true);
-		g.setCaseActif(7, 3, true);
-		g.setCaseActif(6, 4, true);
-		g.setCaseActif(7, 4, true);
+		r.avancer();
+		g.setCaseActif(true);
 		
-		// bouche
-		g.setCaseActif(1, 6, true);
-		g.setCaseActif(2, 7, true);
-		g.setCaseActif(3, 8, true);
-		g.setCaseActif(4, 8, true);
-		g.setCaseActif(5, 8, true);
-		g.setCaseActif(6, 8, true);
-		g.setCaseActif(7, 7, true);
-		g.setCaseActif(8, 6, true);
+		r.avancer();
+		r.avancer();
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.tourner(Direction.Droite);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.tourner(Direction.Droite);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		r.avancer();
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		r.avancer();
+		r.tourner(Direction.Droite);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.tourner(Direction.Droite);
+		r.avancer();
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		r.tourner(Direction.Gauche);
+		r.avancer();
+		g.setCaseActif(true);
+		
+		r.avancer();
+		r.tourner(Direction.Droite);
+		r.avancer();
+		g.setCaseActif(true);
 		
 	}
 	
