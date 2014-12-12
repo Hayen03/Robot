@@ -3,8 +3,10 @@ package hayen.robot;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.FichierIncorrectException;
@@ -13,7 +15,7 @@ import hayen.robot.programme.Programme;
 public class Main {
 
 	public static void main(String[] args) {
-		if (args.length == 0) test2();
+		if (args.length == 0) test();
 		
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
 			Bloc instructions;
@@ -74,95 +76,40 @@ public class Main {
 	}
 
 	public static void test(){
-		String adresseEntree = JOptionPane.showInputDialog("Entrez l'adresse d'entrée");
-		String adresseSortie = JOptionPane.showInputDialog("Entrez l'adress de sortie");
-		Bloc insts;
-
-		try {
-			insts = Compilateur.compileFichier(adresseEntree);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		} catch (FichierIncorrectException e) {
-			System.err.println("fichier invalide");
-			return;
-		} catch (OperationInvalideException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		try {
-			Compilateur.compileVersFichier(adresseSortie, insts);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-
-	}
-
-	public static void test2(){
-		String adresse = JOptionPane.showInputDialog("Entrez l'adresse"); // /Users/Hayen/Desktop/premier.prc
-		Programme p;
 		
-
-		try {
-			p = new Programme(adresse);
-		} catch (FileNotFoundException e) {
-			System.err.println("Ficher non-trouvé");
-			return;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			return;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		} catch (FichierIncorrectException e) {
-			System.err.println("fichier invalde");
-			return;
-		} catch (OperationInvalideException e) {
-			e.printStackTrace();
-			return;
-		}
-
-//		p.printInstruction();
-		p.executer();
-
-	}
-
-	public static void test3(){
-		String adresse = JOptionPane.showInputDialog("Entrez l'adresse"); // /Users/Hayen/Desktop/premier.pr
-		Programme p;
-
-		try {
-			p = new Programme(Compilateur.compileFichier(adresse));
-		} catch (FileNotFoundException e) {
-			System.err.println("Ficher non-trouvé");
-			return;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		} catch (FichierIncorrectException e) {
-			System.err.println("fichier invalde");
-			return;
-		} catch (OperationInvalideException e) {
-			e.printStackTrace();
-			return;
-		}
-
-		p.executer();
-		p.printInstruction();
-
-	}
-
-	public static void test4(){
-		String texte = "var ill\nafficher ill .32\nill : 6\nafficher ill";
-		try {
-			Programme p = new Programme(Compilateur.compile(texte));
-			p.executer();
-		} catch (OperationInvalideException e) {
-			e.printStackTrace();
-			return;
-		}
+		Grille g = new Grille();
+		
+		JFrame f = new JFrame();
+		f.setTitle("TEST");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().add(g);
+		f.setResizable(false);
+		f.pack();
+		f.setLocation(10, 10);
+		f.setVisible(true);
+		
+		// oeil droit
+		g.setCaseActif(2, 3, true);
+		g.setCaseActif(3, 3, true);
+		g.setCaseActif(2, 4, true);
+		g.setCaseActif(3, 4, true);
+		
+		// oeil gauche
+		g.setCaseActif(6, 3, true);
+		g.setCaseActif(7, 3, true);
+		g.setCaseActif(6, 4, true);
+		g.setCaseActif(7, 4, true);
+		
+		// bouche
+		g.setCaseActif(1, 6, true);
+		g.setCaseActif(2, 7, true);
+		g.setCaseActif(3, 8, true);
+		g.setCaseActif(4, 8, true);
+		g.setCaseActif(5, 8, true);
+		g.setCaseActif(6, 8, true);
+		g.setCaseActif(7, 7, true);
+		g.setCaseActif(8, 6, true);
 		
 	}
+	
 }

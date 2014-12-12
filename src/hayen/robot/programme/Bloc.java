@@ -7,6 +7,8 @@ import java.util.Hashtable;
 
 public class Bloc implements Serializable, Executable {
 	
+	private static final long serialVersionUID = 3628682715554671250L;
+	
 	protected final Instruction[] _instructions;
 	protected Hashtable<String, Integer> _variables;
 	protected int _ligne;

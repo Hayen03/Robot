@@ -474,7 +474,6 @@ public class Compilateur {
 					// si c'est un operateur, ou un mot de comparaison, ou le mot d'assignation, on pousse le mot
 					if (operateur.contains("" + l) || comparaison.contains("" + l) || motAssignation.equals("" + l) || motCaractere.equals("" + l)){
 						mots.add("" + l);
-						String a = "";
 					}
 
 					// si c'est un espace ou une tabulation, on avance sans rien faire
@@ -523,20 +522,3 @@ public class Compilateur {
 	}
 
 }
-
-/*
- // vérification du premier terme (doit être une valeur)
-				if (terme.get(0).getClass().equals(Character.class)) 
-					throw new OperationInvalideException("ERREUR: premier terme de l'assignation invalide\nln." + (i+1));
-				// cas ou il y a plusieurs termes
-				if (terme.size() >= 2){ 
-					// si il y a plus de 1 terme et que le dernier est une valeur, il y a erreur
-					if (!terme.get(terme.size()-1).getClass().equals(Character.class)) 
-						throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
-
-					boolean operateur = terme.get(1).getClass().equals(Character.class); // indique si le terme précédent est un insterateur
-					for (j = 2; j < terme.size(); j++) 
-						if (terme.get(j).getClass().equals(Character.class) == operateur) 
-							throw new OperationInvalideException("ERREUR: expression invalide\nln." + (i+1));
-				}
- */
