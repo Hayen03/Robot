@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Polygon;
 
 import javax.swing.JPanel;
 
@@ -88,11 +89,24 @@ public class Grille extends JPanel {
 				else
 					g2.setColor(CouleurNonActif);
 				g2.fillRect(x*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, y*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, TailleCarre, TailleCarre);
-				if (_robot.getX() == x && _robot.getY() == y){
-					g2.setColor(CouleurRobot);
-					g2.fillOval(x*TailleCarre + (x+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, (y)*TailleCarre + (y+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, TailleRobot, TailleRobot);
-				}
+				
 			}
+		
+		dessinerRobot(g2, _robot.getX(), _robot.getY());
+		
+	}
+	
+	private void dessinerRobot(Graphics2D g2, int x, int y){
+		g2.setColor(CouleurRobot);
+//		g2.fillOval(x*TailleCarre + (x+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, (y)*TailleCarre + (y+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, TailleRobot, TailleRobot);
+		int tmpX = x*TailleCarre + (x+1)*EspaceEntreCase + TailleCarre/2;
+		int tmpY = (y)*TailleCarre + (y+1)*EspaceEntreCase + TailleCarre/2;
+		int[] xs = {tmpX+15, tmpX, tmpX-15}, ys = {tmpY+15, tmpY-15, tmpY+15};
+		Polygon robot = new Polygon(xs, ys, 3);
+		double theta = Math.toRadians(-90 * _robot.getOrientation());
+		g2.rotate(theta);
+		g2.fillPolygon(robot);
+		g2.rotate(-theta);
 	}
 	
 	/**
