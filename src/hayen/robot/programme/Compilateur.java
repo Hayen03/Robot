@@ -19,21 +19,21 @@ public class Compilateur {
 
 	// liste de mots réservés
 	private static final String[] motReserve = new String[9];
-	public static final String motDeclaration = ajouterMotReserve("var");
-	public static final String motCondition = ajouterMotReserve("si");
-	public static final String motSinon = ajouterMotReserve("sinon");
-	public static final String motFin = ajouterMotReserve("fin");
-	public static final String motAfficher = ajouterMotReserve("afficher");
-	public static final String motTourner = ajouterMotReserve("tourner");
-	public static final String motDeplacer = ajouterMotReserve("deplacer");
-	public static final String motBoucle = ajouterMotReserve("tantque");
-	public static final String motQuitter = ajouterMotReserve("retour");
+	private static final String motDeclaration = ajouterMotReserve("var");
+	private static final String motCondition = ajouterMotReserve("si");
+	private static final String motSinon = ajouterMotReserve("sinon");
+	private static final String motFin = ajouterMotReserve("fin");
+	private static final String motAfficher = ajouterMotReserve("afficher");
+	private static final String motTourner = ajouterMotReserve("tourner");
+	private static final String motDeplacer = ajouterMotReserve("avancer");
+	private static final String motBoucle = ajouterMotReserve("tantque");
+//	private static final String motQuitter = ajouterMotReserve("retour");
 	public static final String motAssignation = ":";
-	public static final String motCommentaire = "#";
+	private static final String motCommentaire = "#";
 	public static final String motCaractere = ".";
 
-	public static final String operateur = "+-/*%";
-	public static final String comparaison = "><=";
+	private static final String operateur = "+-/*%";
+	private static final String comparaison = "><=";
 
 	public static final String operateurAdd = "+";
 	public static final String operateurMin = "-";
@@ -45,12 +45,14 @@ public class Compilateur {
 	public static final String comparaisonPetit = "<";
 	public static final String comparaisonEgal = "=";
 
-	public static final String exension = ".pr";
+	private static final String exension = ".pr";
 
 	public static final int blocMain = 0;
 	public static final int blocSi = 1;
 	public static final int blocSinon = 2;
 	public static final int blocBoucle = 3;
+	
+	private static final String[] variablesPreEnregistre = {"hauteur", "largeur"};
 
 	/** compile un programme à partir d'un fichier .pr
 	 * @param adresse : l'adresse du fichier à compiler
@@ -123,10 +125,19 @@ public class Compilateur {
 	 * @return le programme compilé
 	 * @throws CaractereInvalideException 
 	 */
+	@SuppressWarnings("unchecked")
 	private static Bloc compile(int typeBloc, Vector<String> preVar, ArrayList<String> texte, int taille) throws OperationInvalideException{
 		Vector<Instruction> instructions = new Vector<Instruction>();
-		@SuppressWarnings("unchecked")
-		Vector<String> var = preVar != null ? (Vector<String>)preVar.clone() : new Vector<String>();
+		
+		Vector<String> var;
+		if (preVar != null)
+			var = (Vector<String>)preVar.clone();
+		else {
+			var = new Vector<String>();
+			for (String v : variablesPreEnregistre)
+				var.add(v);
+		}
+		
 		Bloc retour;
 
 		int i; // le numero de la ligne
@@ -330,7 +341,34 @@ public class Compilateur {
 				retour = new Bloc(instructions.toArray(new Instruction[instructions.size()]));
 				return retour;
 			}
-
+			
+			/* ---------------------------------------------------- AVANCER ----------------------------------------------- */
+			else if (premierMot.equals(motDeplacer)){
+				// il ne doit y avoir rien qui suit l'operation
+				if (inst.length > 1)
+					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
+				else
+					instructions.add(new Avancer());
+			}
+			
+			/* ---------------------------------------------------- TOURNER ----------------------------------------------- */
+			else if (premierMot.equals(motTourner)){
+				// ce qui suit l'opération doit être un nombre ou une variable (un seul(pour le moment))
+				if (inst.length > 3 || inst.length < 2) // la limite est à 3 au cas où c'est un nombre négatif (EX: -1 --> le coupeur de mot va le séparer ainsi : -, 1, donc deux mots)
+					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
+				else {
+					String s;
+					if (inst.length == 3){
+						if (!inst[1].equals("-"))
+							throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
+						else
+							s = inst[2];
+						//TODO
+					}
+					
+				}
+			}
+			
 			/* ---------------------------------------------------- ASSIGNATION ----------------------------------------------- */
 			else { 
 				// on peut assigner plusieurs variable en même temps
