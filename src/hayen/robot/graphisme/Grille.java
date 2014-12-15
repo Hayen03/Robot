@@ -40,17 +40,34 @@ public class Grille extends JPanel {
 		_robot = new Robot(this);
 	}
 	
+	/**
+	 * Assigne la case situé à (x, y) à v
+	 * @param x : la position en x de la case
+	 * @param y : la position en y de la case
+	 * @param v : la valeur à assigner à la case
+	 */
 	public void setCaseActif(int x, int y, boolean v){
 		_grille[x][y] = v;
 	}
+	
+	/**
+	 * Active ou désactive la case où se trouve le robot
+	 * @param v : boolean - Active/Désactive
+	 */
 	public void setCaseActif(boolean v){
 		_grille[_robot.getX()][_robot.getY()] = v;
 	}
 	
+	/**
+	 * @return la taille de la grille sous la forme {x, y}
+	 */
 	public int[] getTailleGrille(){
 		return new int[]{_x, _y};
 	}
 	
+	/**
+	 * @return Le robot associé à la grille, null si il n'y en a pas
+	 */
 	public Robot getRobot(){
 		return _robot;
 	}
@@ -78,8 +95,16 @@ public class Grille extends JPanel {
 			}
 	}
 	
-	public void changerCouleur(int r, int g, int b){
+	/**
+	 * Change la couleur d'affichage
+	 * @param r : [0, 255] al quantité de rouge dans la couleur
+	 * @param g : [0, 255] al quantité de vert dans la couleur
+	 * @param b : [0, 255] al quantité de bleu dans la couleur
+	 * @return retourne la grille
+	 */
+	public Grille changerCouleur(int r, int g, int b){
 		_couleur = new Color(r, g, b);
+		return this;
 	}
 	
 }

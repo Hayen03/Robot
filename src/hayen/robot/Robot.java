@@ -15,9 +15,23 @@ public class Robot {
 		_grille = grille;
 	}
 	
+	/**
+	 * @return la position en x du robot
+	 */
 	public int getX(){ return _x; }
+	/**
+	 * @return la position en y du robot
+	 */
 	public int getY(){ return _y; }
+	/**
+	 * @return l'orientation du robot
+	 */
+	public int getOrientation(){ return _orientation; }
 	
+	/**
+	 * Avance le robot d'une case dépendant de son orientation
+	 * @return vrai si le déplacement est réussit, faux si il y a un obstacle
+	 */
 	public boolean avancer(){
 		int[] tailleGrille = _grille.getTailleGrille();
 		
@@ -56,6 +70,11 @@ public class Robot {
 		return true;
 	}
 	
+	/**
+	 * change la direction du robot
+	 * @param direction : la direction vers laquel il faut tourne, n'accepte que Direction.Gauche et Direction.Droite: les autres ne font rien
+	 * @return le Robot
+	 */
 	public Robot tourner(int direction){
 		
 		switch(direction){
