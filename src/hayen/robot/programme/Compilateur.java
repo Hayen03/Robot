@@ -358,14 +358,33 @@ public class Compilateur {
 					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
 				else {
 					String s;
+					Tourner toAdd;
+					
 					if (inst.length == 3){
 						if (!inst[1].equals("-"))
 							throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
-						else
+						else {
 							s = inst[2];
-						//TODO
+							if (Util.isDigit(s))
+								toAdd = new Tourner(-Integer.parseInt(s));
+							else if (!var.contains(s))
+								throw new OperationInvalideException("ERREUR: Variable non declaré\nln." + (i+1));
+							else 
+								toAdd = new Tourner("-" + s);
+						}
 					}
 					
+					else {
+						s = inst[1];
+						if (Util.isDigit(s))
+							toAdd = new Tourner(Integer.parseInt(s));
+						else if (!var.contains(s))
+							throw new OperationInvalideException("ERREUR: Variable non declaré\nln." + (i+1));
+						else 
+							toAdd = new Tourner(s);
+					}
+					
+					instructions.add(toAdd);
 				}
 			}
 			

@@ -30,6 +30,10 @@ public class Programme extends Bloc{
 		return this;
 	}
 	
+	public Grille getGrille(){
+		return _grille;
+	}
+	
 	private static Bloc getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
 		Bloc instructions;
 		if (adresse.endsWith(".pr")){

@@ -1,6 +1,6 @@
 package hayen.robot.programme.instruction;
 
-import hayen.robot.programme.Bloc;
+import hayen.robot.programme.Programme;
 
 public class Avancer extends Instruction {
 
@@ -12,8 +12,8 @@ public class Avancer extends Instruction {
 	
 	@Override
 	public boolean executer(Object... params) {
-		Bloc p = (Bloc)params[0];
-		
+		Programme p = (Programme)params[0];
+		p.getGrille().getRobot().avancer();
 		return true;
 	}
 
