@@ -15,10 +15,10 @@ import java.util.Vector;
 
 public class Compilateur {
 
-	public static final String version = "0.2";
+	public static final String version = "0.4";
 
 	// liste de mots rÃ©servÃ©s
-	private static final String[] motReserve = new String[9];
+	private static final String[] motReserve = new String[11];
 	private static final String motDeclaration = ajouterMotReserve("var");
 	private static final String motCondition = ajouterMotReserve("si");
 	private static final String motSinon = ajouterMotReserve("sinon");
@@ -27,7 +27,8 @@ public class Compilateur {
 	private static final String motTourner = ajouterMotReserve("tourner");
 	private static final String motDeplacer = ajouterMotReserve("avancer");
 	private static final String motBoucle = ajouterMotReserve("tantque");
-//	private static final String motQuitter = ajouterMotReserve("retour");
+	private static final String motPlacer = ajouterMotReserve("placer");
+	private static final String motEnlever = ajouterMotReserve("enlever");
 	public static final String motAssignation = ":";
 	private static final String motCommentaire = "#";
 	public static final String motCaractere = ".";
@@ -342,13 +343,20 @@ public class Compilateur {
 				return retour;
 			}
 			
-			/* ---------------------------------------------------- AVANCER ----------------------------------------------- */
-			else if (premierMot.equals(motDeplacer)){
-				// il ne doit y avoir rien qui suit l'operation
+			/* ---------------------------------------------------- AVANCER/PLACER/ENLEVER ----------------------------------------------- */
+			// ils sont tellement semblable que l'on peut se permettre de vÃ©rifier les trois d'un seul coup
+			else if (premierMot.equals(motDeplacer) || premierMot.equals(motPlacer) || premierMot.equals(motPlacer)){
+				// La seule conttrainte est qu'il ne doit y avoir rien qui suit l'operation
 				if (inst.length > 1)
 					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
-				else
-					instructions.add(new Avancer());
+				else { // ici on fait le tri de quoi est quoi
+					if (premierMot.equals(motDeplacer))
+						instructions.add(new Avancer());
+					else if (premierMot.equals(motPlacer))
+						instructions.add(new Placer(true));
+					else
+						instructions.add(new Placer(false));
+				}
 			}
 			
 			/* ---------------------------------------------------- TOURNER ----------------------------------------------- */
@@ -368,7 +376,7 @@ public class Compilateur {
 							if (Util.isDigit(s))
 								toAdd = new Tourner(-Integer.parseInt(s));
 							else if (!var.contains(s))
-								throw new OperationInvalideException("ERREUR: Variable non declaré\nln." + (i+1));
+								throw new OperationInvalideException("ERREUR: Variable non declarï¿½\nln." + (i+1));
 							else 
 								toAdd = new Tourner("-" + s);
 						}
@@ -379,7 +387,7 @@ public class Compilateur {
 						if (Util.isDigit(s))
 							toAdd = new Tourner(Integer.parseInt(s));
 						else if (!var.contains(s))
-							throw new OperationInvalideException("ERREUR: Variable non declaré\nln." + (i+1));
+							throw new OperationInvalideException("ERREUR: Variable non declarï¿½\nln." + (i+1));
 						else 
 							toAdd = new Tourner(s);
 					}

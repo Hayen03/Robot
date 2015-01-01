@@ -1,8 +1,11 @@
 package hayen.robot;
 
+import java.awt.HeadlessException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.Bloc;
@@ -12,7 +15,7 @@ import hayen.robot.programme.OperationInvalideException;
 import hayen.robot.programme.Programme;
 public class Main {
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException {
 		if (args.length == 0) test();
 		
 		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
@@ -72,13 +75,12 @@ public class Main {
 			p.executer();
 		}
 	}
-
-	public static void test() throws InterruptedException{
-		
+	
+	public static void defaut1() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
 		Grille g = new Grille();
-		Robot r = g.getRobot();
-		
+		Programme p = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exemple.pr");
 		JFrame f = new JFrame();
+		
 		f.setTitle("TEST");
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.getContentPane().add(g);
@@ -86,81 +88,43 @@ public class Main {
 		f.pack();
 		f.setLocation(10, 10);
 		f.setVisible(true);
+		p.setGrille(g);
 		
-		r.tourner(Direction.Droite);
-		r.avancer();
-		r.avancer();
-		r.avancer();
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		r.avancer();
-		g.setCaseActif(true);
+		p.executer();
+	}
+
+	public static void defaut2() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
+		Grille g = new Grille();
+		Programme p = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exempleRobot.pr");
+		JFrame f = new JFrame();
 		
-		r.avancer();
-		g.setCaseActif(true);
+		f.setTitle("TEST");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().add(g);
+		f.setResizable(false);
+		f.pack();
+		f.setLocation(10, 10);
+		f.setVisible(true);
+		p.setGrille(g);
 		
-		r.avancer();
-		r.avancer();
-		r.avancer();
-		g.setCaseActif(true);
+		p.executer();
+	}
+	
+	public static void test() throws FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
+		Grille g = new Grille();
+		Programme p = new Programme(JOptionPane.showInputDialog("Entrez l'adresse"));
+		JFrame f = new JFrame();
 		
-		r.avancer();
-		g.setCaseActif(true);
+		f.setTitle("TEST");
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().add(g);
+		f.setResizable(false);
+		f.pack();
+		f.setLocation(10, 10);
+		f.setVisible(true);
+		p.setGrille(g);
 		
-		r.tourner(Direction.Droite);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.tourner(Direction.Droite);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		r.avancer();
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		r.avancer();
-		r.tourner(Direction.Droite);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.tourner(Direction.Droite);
-		r.avancer();
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		r.tourner(Direction.Gauche);
-		r.avancer();
-		g.setCaseActif(true);
-		
-		r.avancer();
-		r.tourner(Direction.Droite);
-		r.avancer();
-		g.setCaseActif(true);
-		
+		p.executer();
 	}
 	
 }

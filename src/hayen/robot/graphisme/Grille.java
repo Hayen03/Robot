@@ -15,7 +15,7 @@ public class Grille extends JPanel {
 	public static final int TailleParDefaut = 10;
 	public static final Color CouleurActifDefaut = Color.yellow;
 	public static final Color CouleurNonActif = Color.black;
-	public static final Color CouleurRobot = new Color(2704 % 255, 645 % 255, 465 % 255);
+	public static final Color CouleurRobot = new Color((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
 	public static final int TailleCarre = 50;
 	public static final int TailleRobot = 25;
 	public static final int EspaceEntreCase = 5;
@@ -25,6 +25,8 @@ public class Grille extends JPanel {
 	private int _y;
 	private Color _couleur;
 	private Robot _robot;
+	
+	private int[] _milieu;
 	
 	public Grille(){
 		this(TailleParDefaut, TailleParDefaut);
@@ -39,21 +41,22 @@ public class Grille extends JPanel {
 		_y = y;
 		_couleur = CouleurActifDefaut;
 		_robot = new Robot(this);
+		_milieu = new int[2]; _milieu[0] = _x/2; _milieu[1] = _y/2;
 	}
 	
 	/**
-	 * Assigne la case situé à (x, y) à v
+	 * Assigne la case situï¿½ ï¿½ (x, y) ï¿½ v
 	 * @param x : la position en x de la case
 	 * @param y : la position en y de la case
-	 * @param v : la valeur à assigner à la case
+	 * @param v : la valeur ï¿½ assigner ï¿½ la case
 	 */
 	public void setCaseActif(int x, int y, boolean v){
 		_grille[x][y] = v;
 	}
 	
 	/**
-	 * Active ou désactive la case où se trouve le robot
-	 * @param v : boolean - Active/Désactive
+	 * Active ou dï¿½sactive la case oï¿½ se trouve le robot
+	 * @param v : boolean - Active/Dï¿½sactive
 	 */
 	public void setCaseActif(boolean v){
 		_grille[_robot.getX()][_robot.getY()] = v;
@@ -67,7 +70,7 @@ public class Grille extends JPanel {
 	}
 	
 	/**
-	 * @return Le robot associé à la grille, null si il n'y en a pas
+	 * @return Le robot associï¿½ ï¿½ la grille, null si il n'y en a pas
 	 */
 	public Robot getRobot(){
 		return _robot;
@@ -82,6 +85,16 @@ public class Grille extends JPanel {
 	protected void paintComponent(Graphics g){
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D) g;
+		
+		dessinerGrille(g2);
+		dessinerRobot(g2, _robot.getX(), _robot.getY());
+		
+	}
+	
+	/**
+	 * Dessine la grille Ã  l'Ã©cran avec les bonnes dimensions et couleurs
+	 */
+	private void dessinerGrille(Graphics2D g2){
 		for (int x = 0; x < _x; x++)
 			for (int y = 0; y < _y; y++){
 				if (_grille[x][y]) 
@@ -89,31 +102,36 @@ public class Grille extends JPanel {
 				else
 					g2.setColor(CouleurNonActif);
 				g2.fillRect(x*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, y*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, TailleCarre, TailleCarre);
-				
 			}
-		
-		dessinerRobot(g2, _robot.getX(), _robot.getY());
-		
 	}
 	
+	/**
+	 * Dessine le robot Ã  la position indiquÃ© avec la bonne rotation
+	 * @param g2
+	 * @param x
+	 * @param y
+	 */
 	private void dessinerRobot(Graphics2D g2, int x, int y){
 		g2.setColor(CouleurRobot);
-//		g2.fillOval(x*TailleCarre + (x+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, (y)*TailleCarre + (y+1)*EspaceEntreCase + (TailleCarre - TailleRobot)/2, TailleRobot, TailleRobot);
+
 		int tmpX = x*TailleCarre + (x+1)*EspaceEntreCase + TailleCarre/2;
 		int tmpY = (y)*TailleCarre + (y+1)*EspaceEntreCase + TailleCarre/2;
+		
 		int[] xs = {tmpX+15, tmpX, tmpX-15}, ys = {tmpY+15, tmpY-15, tmpY+15};
 		Polygon robot = new Polygon(xs, ys, 3);
+		
 		double theta = Math.toRadians(-90 * _robot.getOrientation());
-		g2.rotate(theta);
+		
+		g2.rotate(-theta, tmpX, tmpY);
 		g2.fillPolygon(robot);
-		g2.rotate(-theta);
+		g2.rotate(theta, tmpX, tmpY);
 	}
 	
 	/**
 	 * Change la couleur d'affichage
-	 * @param r : [0, 255] al quantité de rouge dans la couleur
-	 * @param g : [0, 255] al quantité de vert dans la couleur
-	 * @param b : [0, 255] al quantité de bleu dans la couleur
+	 * @param r : [0, 255] al quantitï¿½ de rouge dans la couleur
+	 * @param g : [0, 255] al quantitï¿½ de vert dans la couleur
+	 * @param b : [0, 255] al quantitï¿½ de bleu dans la couleur
 	 * @return retourne la grille
 	 */
 	public Grille changerCouleur(int r, int g, int b){
