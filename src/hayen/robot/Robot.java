@@ -29,8 +29,8 @@ public class Robot {
 	public int getOrientation(){ return _orientation; }
 	
 	/**
-	 * Avance le robot d'une case dépendant de son orientation
-	 * @return vrai si le déplacement est réussit, faux si il y a un obstacle
+	 * Avance le robot d'une case dï¿½pendant de son orientation
+	 * @return vrai si le dï¿½placement est rï¿½ussit, faux si il y a un obstacle
 	 */
 	public boolean avancer(){
 		int[] tailleGrille = _grille.getTailleGrille();
@@ -38,28 +38,32 @@ public class Robot {
 		switch(_orientation){
 		
 		case Direction.Nord:
-			if (--_y < 0){
+			_y--;
+			if (_y < 0){
 				_y++;
 				return false;
 			}
 			break;
 			
 		case Direction.Sud:
-			if (++_y >= tailleGrille[1]){
+			_y++;
+			if (_y >= tailleGrille[1]){
 				_y--;
 				return false;
 			}
 			break;
 			
 		case Direction.Est:
-			if (++_x >= tailleGrille[0]){
+			++_x;
+			if (_x >= tailleGrille[0]){
 				_x--;
 				return false;
 			}
 			break;
 			
 		case Direction.Ouest:
-			if (--_x < 0){
+			--_x;
+			if (_x < 0){
 				_x++;
 				return false;
 			}
@@ -79,15 +83,15 @@ public class Robot {
 		
 		switch(direction){
 		case Direction.Droite:
-			_orientation++;
+			_orientation--;
 			break;
 		case Direction.Gauche:
-			_orientation--;
+			_orientation++;
 			break;
 		}
 		
 		_orientation %= 4;
-		if (_orientation < 0) _orientation = 4 - _orientation;
+		if (_orientation < 0) _orientation = 4 + _orientation;
 		
 		return this;
 	}

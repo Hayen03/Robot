@@ -22,43 +22,21 @@ tourner droite
 avancer
 placer
 
-tourner gauche
-avancer
-placer
-
-avancer
-avancer
-avancer
-placer
-
-avancer
-placer
-
-tourner gauche
-avancer
-avancer
 tourner droite
 avancer
 placer
 
+avancer
+avancer
+avancer
+placer
+
+avancer
+placer
+
+avancer
 tourner gauche
 avancer
-tourner gauche
-avancer
-placer
-
-tourner droite
-avancer
-tourner gauche
-avancer
-placer
-
-avancer
-placer
-
-avancer
-placer
-
 avancer
 placer
 
@@ -71,3 +49,33 @@ avancer
 tourner droite
 avancer
 placer
+
+tourner gauche
+avancer
+placer
+
+avancer
+placer
+
+avancer
+placer
+
+avancer
+tourner gauche
+avancer
+placer
+
+avancer
+tourner droite
+avancer
+placer
+
+avancer
+tourner droite
+#afficher 1
+var h
+h : hauteur 1 -
+tantque posy < h
+	avancer
+fin
+afficher .102 .105 .110 .10

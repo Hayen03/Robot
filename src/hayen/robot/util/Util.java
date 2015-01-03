@@ -22,4 +22,14 @@ public class Util {
 		return retour;
 	}
 	
+	public static boolean contains(Object[] array, Object obj){
+		int i = 0;
+		while (i < array.length){
+			if (array[i].equals(obj))
+				return true;
+			i++;
+		}
+		return false;
+	}
+	
 }

@@ -6,32 +6,60 @@ import java.io.IOException;
 //import java.io.InputStream;
 import java.io.ObjectInputStream;
 
+import hayen.robot.Direction;
+import hayen.robot.Robot;
+import hayen.robot.graphisme.Console;
 import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.instruction.*;
 
 public class Programme extends Bloc{
 	
-	private Grille _grille = null;
-
+	private Grille _grille;
+	private Console _console;
+	
 	public Programme(Instruction[] instructions){
 		super(instructions);
+		_grille = null;
+		_console = null;
 	}
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
 		super(getInstructionsFromFichier(adresse));
+		_grille = null;
+		_console = null;
 	}
 	public Programme(Bloc original){
 		super(original);
+		_grille = null;
+		_console = null;
 	}
 	
 	public Programme setGrille(Grille g){
 		_grille = g;
+		Robot r = g.getRobot();
 		assigner("largeur", g.getTailleGrille()[0]);
 		assigner("hauteur", g.getTailleGrille()[1]);
+		assigner("posx", r.getX());
+		assigner("posy", r.getY());
+		assigner("orientation", r.getOrientation());
+		assigner("gauche", 1);
+		assigner("droite", -1);
+		assigner("nord", Direction.Nord);
+		assigner("ouest", Direction.Ouest);
+		assigner("sud", Direction.Sud);
+		assigner("est", Direction.Est);
+		
 		return this;
 	}
-	
 	public Grille getGrille(){
 		return _grille;
+	}
+	
+	public Programme setConsole(Console c){
+		_console = c;
+		return this;
+	}
+	public Console getConsole(){
+		return _console;
 	}
 	
 	private static Bloc getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
@@ -50,6 +78,7 @@ public class Programme extends Bloc{
 			}
 			fichier.close();
 		}
+		System.out.println("fin compilation");
 		return instructions;
 	}
 	

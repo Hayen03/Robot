@@ -117,14 +117,14 @@ public class Grille extends JPanel {
 		int tmpX = x*TailleCarre + (x+1)*EspaceEntreCase + TailleCarre/2;
 		int tmpY = (y)*TailleCarre + (y+1)*EspaceEntreCase + TailleCarre/2;
 		
-		int[] xs = {tmpX+15, tmpX, tmpX-15}, ys = {tmpY+15, tmpY-15, tmpY+15};
+		int[] xs = {tmpX-15, tmpX+15, tmpX-15}, ys = {tmpY+15, tmpY, tmpY-15};
 		Polygon robot = new Polygon(xs, ys, 3);
 		
-		double theta = Math.toRadians(-90 * _robot.getOrientation());
+		double theta = -Math.toRadians(90 * (_robot.getOrientation()));
 		
-		g2.rotate(-theta, tmpX, tmpY);
-		g2.fillPolygon(robot);
 		g2.rotate(theta, tmpX, tmpY);
+		g2.fillPolygon(robot);
+		g2.rotate(-theta, tmpX, tmpY);
 	}
 	
 	/**

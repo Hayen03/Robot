@@ -18,7 +18,7 @@ public class Compilateur {
 	public static final String version = "0.4";
 
 	// liste de mots réservés
-	private static final String[] motReserve = new String[11];
+	private static final String[] motReserve = new String[10];
 	private static final String motDeclaration = ajouterMotReserve("var");
 	private static final String motCondition = ajouterMotReserve("si");
 	private static final String motSinon = ajouterMotReserve("sinon");
@@ -53,7 +53,7 @@ public class Compilateur {
 	public static final int blocSinon = 2;
 	public static final int blocBoucle = 3;
 	
-	private static final String[] variablesPreEnregistre = {"hauteur", "largeur"};
+	private static final String[] variablesPreEnregistre = {"hauteur", "largeur", "posx", "posy", "gauche", "droite", "orientation", "nord", "est", "ouest", "sud"};
 
 	/** compile un programme à partir d'un fichier .pr
 	 * @param adresse : l'adresse du fichier à compiler
@@ -144,6 +144,7 @@ public class Compilateur {
 		int i; // le numero de la ligne
 		while (texte.size() > 0){
 			i = taille - texte.size();
+//			System.out.println("ln. " + i);
 			String[] inst = separe(texte.get(0), i);
 			if (inst == null || inst.length == 0){ // on ignore la ligne si aucune instruction n'est donnée
 				texte.remove(0);
@@ -345,7 +346,7 @@ public class Compilateur {
 			
 			/* ---------------------------------------------------- AVANCER/PLACER/ENLEVER ----------------------------------------------- */
 			// ils sont tellement semblable que l'on peut se permettre de vérifier les trois d'un seul coup
-			else if (premierMot.equals(motDeplacer) || premierMot.equals(motPlacer) || premierMot.equals(motPlacer)){
+			else if (premierMot.equals(motDeplacer) || premierMot.equals(motPlacer) || premierMot.equals(motEnlever)){
 				// La seule conttrainte est qu'il ne doit y avoir rien qui suit l'operation
 				if (inst.length > 1)
 					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
@@ -364,9 +365,19 @@ public class Compilateur {
 				// ce qui suit l'opération doit être un nombre ou une variable (un seul(pour le moment))
 				if (inst.length > 3 || inst.length < 2) // la limite est à 3 au cas où c'est un nombre négatif (EX: -1 --> le coupeur de mot va le séparer ainsi : -, 1, donc deux mots)
 					throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (i+1));
+				// ici, on décide de quel bord tourner
 				else {
 					String s;
 					Tourner toAdd;
+					
+					/* CE QUI CE PASSE ICI
+					 * dans les deux bloc suivant, la même étape se passe: il y a l'habituelle vérification de si la valeur entrée est soit
+					 * 	a) un nombre
+					 * 	b) une variable valide
+					 * 	c) une variable invalide
+					 * et agit en conséquence. La différence est que dans le premier bloc, il y a possibilité d'une valeur négative parce que trois terme sont entré (op - val)
+					 * et il faut vérifier que le deuxième terme soit bien le signe - et agir en conséquence
+					 */
 					
 					if (inst.length == 3){
 						if (!inst[1].equals("-"))
@@ -406,6 +417,7 @@ public class Compilateur {
 				int j = 0;
 
 				// trouver les identificateurs
+//				System.out.println("Cherche les identificateurs...");
 				for (; j < inst.length; j++){
 					if (inst[j].equals(motAssignation)){
 						// si le premier terme est le signe d'assignation, il y a un problème
@@ -421,10 +433,16 @@ public class Compilateur {
 					// l'identificateur n'existe pas
 					else if (!var.contains(inst[j])) 
 						throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (i+1));
-
-					else ids.add(inst[j]);
+					
+					// les variables pre enregistrée ne peuvent être modifié par l'utilisateur
+					else if (Util.contains(variablesPreEnregistre, inst[j]))
+						throw new OperationInvalideException("ERREUR: la variable " + inst[j] + " ne peut pas être modifier\nln." + (i+1));
+					
+					else 
+						ids.add(inst[j]);
 				}
 
+//				System.out.println("Cherche les termes");
 				for (; j < inst.length; j++){
 					// operateur
 					if (operateur.contains(inst[j])) terme.add(new Character(inst[j].charAt(0)));
@@ -579,10 +597,9 @@ public class Compilateur {
 	 * @return le mot
 	 */
 	private static String ajouterMotReserve(String mot){
-		for (int i = 0; i < motReserve.length; i++) if (motReserve[i] == null){
-			motReserve[i] = mot;
-			break;
-		}
+		int i = 0;
+		while (motReserve[i] != null) i++;
+		motReserve[i] = mot;
 		return mot;
 	}
 

@@ -86,5 +86,16 @@ public class Bloc implements Serializable, Executable {
 		_parent = parent;
 		return this;
 	}
-	
+	public Bloc getParent(){
+		return _parent;
+	}
+	public Programme getProgramme(){
+		if (this.getClass().equals(Programme.class))
+			return (Programme)this;
+		else if (_parent == null)
+			return null;
+		else
+			return _parent.getProgramme();
+
+	}
 }

@@ -23,13 +23,16 @@ public class Condition extends Instruction {
 
 	@Override
 	public boolean executer(Object... params){
-		Bloc p = (Bloc)params[0];
+		Bloc b = (Bloc)params[0];
 //		System.out.print("<COMPARE ");
-		boolean b = comparerExpression(p, _expression);
+		boolean vrai = comparerExpression(b, _expression);
 //		System.out.print("<" + b + ">");
-		if (b) return _blocSi.setParent(p).executer();
-		else if (_blocSinon != null) return _blocSinon.setParent(p).executer();
-		else return true;
+		if (vrai) 
+			return _blocSi.setParent(b).executer();
+		else if (_blocSinon != null) 
+			return _blocSinon.setParent(b).executer();
+		else
+			return true;
 	}
 	
 	public static boolean comparerExpression(Bloc p, Object... termes){

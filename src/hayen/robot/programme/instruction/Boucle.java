@@ -16,8 +16,8 @@ public class Boucle extends Instruction {
 	
 	@Override
 	public boolean executer(Object... params){
-		Bloc p = (Bloc)params[0];
-		while (Condition.comparerExpression(p, _expression)) _bloc.setParent(p).executer();
+		Bloc b = (Bloc)params[0];
+		while (Condition.comparerExpression(b, _expression)) _bloc.setParent(b).executer();
 		return true;
 	}
 	

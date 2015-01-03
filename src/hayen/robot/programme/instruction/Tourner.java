@@ -1,6 +1,8 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.Direction;
+import hayen.robot.Robot;
+import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Programme;
 
 public class Tourner extends Instruction {
@@ -18,7 +20,9 @@ public class Tourner extends Instruction {
 	
 	@Override
 	public boolean executer(Object... params) {
-		Programme p = (Programme)params[0];
+		Bloc b = (Bloc)params[0];
+		Programme p = b.getProgramme();
+		Robot r = p.getGrille().getRobot();
 		int n;
 		if (_direction.getClass().equals(Integer.class))
 			n = (Integer)_direction;
@@ -27,15 +31,18 @@ public class Tourner extends Instruction {
 			if (s.charAt(0) == '-')
 				n = -p.getVariable(s.substring(1));
 			else
-				n = p.getVariable(s.substring(1));
+				n = p.getVariable(s);
 		}
 		
-		if (n < 0)
-			p.getGrille().getRobot().tourner(Direction.Gauche);
-		else if (n > 0)
-			p.getGrille().getRobot().tourner(Direction.Droite);
-		else
-			p.getGrille().getRobot().tourner(Direction.Avant);
+		// C'est ici que l'on tourne le robot :)
+		if (n > 0){
+			r.tourner(Direction.Gauche);
+			p.assigner("orientation", r.getOrientation());
+		}	
+		else if (n < 0){
+			r.tourner(Direction.Droite);
+			p.assigner("orientation", r.getOrientation());
+		}
 		
 		return true;
 	}

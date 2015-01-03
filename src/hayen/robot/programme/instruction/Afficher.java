@@ -1,7 +1,9 @@
 package hayen.robot.programme.instruction;
 
+import hayen.robot.graphisme.Console;
 import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Compilateur;
+import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
 public class Afficher extends Instruction {
@@ -16,22 +18,41 @@ public class Afficher extends Instruction {
 
 	@Override
 	public boolean executer(Object... params){
-		Bloc p = (Bloc)params[0];
+		Bloc b = (Bloc)params[0];
+		Programme p = b.getProgramme();
 		boolean car = false;
+		String buffer = "";
+		int v;
+		
 		for (String s : _expression){
-			if (s.equals(Compilateur.motCaractere)){ // si un . précède le nombre/variable, on transforme sa valeur en caractère unicode. Ici, on fait seulement dire qu'un point est placé
+			if (s.equals(Compilateur.motCaractere)){ // si un . prï¿½cï¿½de le nombre/variable, on transforme sa valeur en caractï¿½re unicode. Ici, on fait seulement dire qu'un point est placï¿½
 				car = true;
 			}
-			else{ // affiche la chose approprié
-				int v;
-				if (Util.isDigit(s)) v = Integer.parseInt(s);
-				else v = p.getVariable(s);
+			else{ // affiche la chose appropriï¿½
+
+				if (Util.isDigit(s)) 
+					v = Integer.parseInt(s);
+				else 
+					v = b.getVariable(s);
 				
-				if (car) System.out.print((char)v);
-				else System.out.print(v);
+				if (car) 
+					buffer += (char)v;
+				else
+					buffer += v;
 				car = false;
 			}
 		}
+		
+		if (p == null)
+			System.out.print(buffer);
+		else {
+			Console c = p.getConsole();
+			if (c == null)
+				System.out.print(buffer);
+			else
+				c.print(buffer);
+		}
+		
 		return true;
 	}
 	
