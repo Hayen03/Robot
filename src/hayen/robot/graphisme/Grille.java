@@ -10,7 +10,7 @@ import java.awt.Polygon;
 
 import javax.swing.JPanel;
 
-public class Grille extends JPanel {
+public class Grille implements Drawable {
 	
 	public static final int TailleParDefaut = 10;
 	public static final Color CouleurActifDefaut = Color.yellow;
@@ -25,8 +25,9 @@ public class Grille extends JPanel {
 	private int _y;
 	private Color _couleur;
 	private Robot _robot;
+	private Panel _panel;
 	
-	private int[] _milieu;
+	private Vector2 _milieu;
 	
 	public Grille(){
 		this(TailleParDefaut, TailleParDefaut);
@@ -41,7 +42,8 @@ public class Grille extends JPanel {
 		_y = y;
 		_couleur = CouleurActifDefaut;
 		_robot = new Robot(this);
-		_milieu = new int[2]; _milieu[0] = _x/2; _milieu[1] = _y/2;
+		_milieu = new Vector2(_x/2, _y/2);
+		_panel = null;
 	}
 	
 	/**
@@ -65,8 +67,8 @@ public class Grille extends JPanel {
 	/**
 	 * @return la taille de la grille sous la forme {x, y}
 	 */
-	public int[] getTailleGrille(){
-		return new int[]{_x, _y};
+	public Vector2 getTailleGrille(){
+		return new Vector2(_x, _y);
 	}
 	
 	/**
@@ -76,25 +78,15 @@ public class Grille extends JPanel {
 		return _robot;
 	}
 	
-	@Override
 	public Dimension getPreferredSize() {
 	      return new Dimension(_x * (TailleCarre + EspaceEntreCase) + EspaceEntreCase, _y * (TailleCarre + EspaceEntreCase) + EspaceEntreCase);
-	   }
-	
-	@Override
-	protected void paintComponent(Graphics g){
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D) g;
-		
-		dessinerGrille(g2);
-		dessinerRobot(g2, _robot.getX(), _robot.getY());
-		
 	}
 	
 	/**
 	 * Dessine la grille à l'écran avec les bonnes dimensions et couleurs
 	 */
-	private void dessinerGrille(Graphics2D g2){
+	@Override
+	public void draw(Graphics2D g2){
 		for (int x = 0; x < _x; x++)
 			for (int y = 0; y < _y; y++){
 				if (_grille[x][y]) 
@@ -103,29 +95,7 @@ public class Grille extends JPanel {
 					g2.setColor(CouleurNonActif);
 				g2.fillRect(x*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, y*(TailleCarre + EspaceEntreCase) + EspaceEntreCase, TailleCarre, TailleCarre);
 			}
-	}
-	
-	/**
-	 * Dessine le robot à la position indiqué avec la bonne rotation
-	 * @param g2
-	 * @param x
-	 * @param y
-	 */
-	private void dessinerRobot(Graphics2D g2, int x, int y){
-		g2.setColor(CouleurRobot);
-
-		int tmpX = x*TailleCarre + (x+1)*EspaceEntreCase + TailleCarre/2;
-		int tmpY = (y)*TailleCarre + (y+1)*EspaceEntreCase + TailleCarre/2;
-		
-		int[] xs = {tmpX-15, tmpX+15, tmpX-15}, ys = {tmpY+15, tmpY, tmpY-15};
-		Polygon robot = new Polygon(xs, ys, 3);
-		
-		double theta = -Math.toRadians(90 * (_robot.getOrientation()));
-		
-		g2.rotate(theta, tmpX, tmpY);
-		g2.fillPolygon(robot);
-		g2.rotate(-theta, tmpX, tmpY);
-	}
+	}	
 	
 	/**
 	 * Change la couleur d'affichage
@@ -137,6 +107,14 @@ public class Grille extends JPanel {
 	public Grille changerCouleur(int r, int g, int b){
 		_couleur = new Color(r, g, b);
 		return this;
+	}
+	@Override
+	public void setPanel(Panel p) {
+		_panel = p;
+	}
+	@Override
+	public Panel getPanel() {
+		return _panel;
 	}
 	
 }

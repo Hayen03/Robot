@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import hayen.robot.graphisme.Console;
 import hayen.robot.graphisme.Grille;
+import hayen.robot.graphisme.Panel;
 import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.FichierIncorrectException;
@@ -81,65 +82,81 @@ public class Main {
 	
 	public static void defaut1() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
 		Grille g = new Grille();
-		Programme p = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exemple.pr");
+		Programme po = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exemple.pr");
 		JFrame f = new JFrame();
 		Console c = new Console(10, 45);
+		Panel pa = new Panel();
+		Robot r = g.getRobot();
 		
+		pa.addObject(g);
+		pa.addObject(r);
+		pa.setPreferredSize(g.getPreferredSize());
 		f.setTitle("TEST");
 		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS));
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(g);
+		f.getContentPane().add(pa);
 		f.getContentPane().add(c);
 		f.setResizable(false);
 		f.pack();
 		f.setLocation(10, 10);
 		f.setVisible(true);
-		p.setGrille(g);
-		p.setConsole(c);
+		po.setGrille(g);
+		po.setConsole(c);
 		
-		p.executer();
+		po.executer();
 	}
 
 	public static void defaut2() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
 		Grille g = new Grille();
-		Programme p = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exempleRobot2.pr");
+		Programme po = new Programme("/Users/Hayen/Documents/dev/java/Robot/source/exempleRobot2.pr");
 		JFrame f = new JFrame();
-		Console c = new Console(7, 45);
+		Console c = new Console(10, 45);
+		Panel pa = new Panel();
+		Robot r = g.getRobot();
 		
+		pa.addObject(g);
+		pa.addObject(r);
+		pa.setPreferredSize(g.getPreferredSize());
+		r.setAnimer(true);
 		f.setTitle("TEST");
 		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS));
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(g);
+		f.getContentPane().add(pa);
 		f.getContentPane().add(c);
 		f.setResizable(false);
 		f.pack();
 		f.setLocation(10, 10);
 		f.setVisible(true);
-		p.setGrille(g);
-		p.setConsole(c);
+		po.setGrille(g);
+		po.setConsole(c);
 		
-		p.executer();
+		po.start();
 	}
 	
 	public static void test() throws FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{
 		Grille g = new Grille();
-		Programme p = new Programme(JOptionPane.showInputDialog("Entrez l'adresse"));
+		Programme po = new Programme(JOptionPane.showInputDialog("Entrez l'adresse"));
 		JFrame f = new JFrame();
 		Console c = new Console(10, 45);
+		Panel pa = new Panel();
+		Robot r = g.getRobot();
 		
+		pa.addObject(g);
+		pa.addObject(r);
+		pa.setPreferredSize(g.getPreferredSize());
 		f.setTitle("TEST");
 		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS));
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		f.getContentPane().add(g);
+		f.getContentPane().add(pa);
 		f.getContentPane().add(c);
 		f.setResizable(false);
 		f.pack();
 		f.setLocation(10, 10);
 		f.setVisible(true);
-		p.setGrille(g);
-		p.setConsole(c);
+		po.setGrille(g);
+		po.setConsole(c);
 		
-		p.executer();
+		po.executer();
 	}
 	
 }

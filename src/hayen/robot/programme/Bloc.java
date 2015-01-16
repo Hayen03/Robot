@@ -46,10 +46,17 @@ public class Bloc implements Serializable, Executable {
 
 	@Override
 	public boolean executer(Object... params) {
-		for (Instruction i : _instructions){
-			i.executer(this);
-			_ligne++;
+		Programme p = getProgramme();
+		
+		int i = 0;
+		while (i < _instructions.length){
+			if (!p.isPaused()){
+//				System.out.print("l ");
+				_instructions[i].executer(this);
+				i++;
+			}
 		}
+		
 		return true;
 	}
 	

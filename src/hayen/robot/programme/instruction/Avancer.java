@@ -17,12 +17,7 @@ public class Avancer extends Instruction {
 		Bloc b = (Bloc)params[0];
 		Programme p = b.getProgramme();
 		Robot r = p.getGrille().getRobot();
-//		System.out.print("Mouvement (" + r.getX() + ", " + r.getY() + ")-->");
-		boolean temp = r.avancer();
-//		System.out.println("(" + r.getX() + ", " + r.getY() + "): " + (temp ? "réussi" : "échec"));
-		// réassigne les valeurs de "posX" et "posY"
-		p.assigner("posx", r.getX());
-		p.assigner("posy", r.getY());
+		r.avancer(p);
 		
 		return true;
 	}

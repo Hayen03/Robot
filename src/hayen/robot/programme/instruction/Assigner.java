@@ -1,7 +1,6 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Bloc;
-import hayen.robot.programme.Programme;
 
 public class Assigner extends Instruction {
 	
