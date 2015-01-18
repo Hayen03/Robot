@@ -14,7 +14,8 @@ import hayen.robot.programme.Programme;
 
 public class Robot implements Drawable {
 	
-	public static double Vitesse = 0.05; // pixel par seconde
+	public static double Vitesse = 0.05; 
+	public static double VitesseRotation = 0.05;
 	
 	private double _orientation;
 	private Vector2 _position;
@@ -56,7 +57,15 @@ public class Robot implements Drawable {
 	 * @return l'orientation du robot
 	 */
 	public int getOrientation(){ return (int)_orientation; }
-	public double getRotation(){ return _orientation; }
+	public void setOrientation(int rot){
+		_orientation = rot;
+	}
+	public void setRotation(double rot){
+		_orientation = rot;
+	}
+	public double getRotation(){
+		return _orientation;
+	}
 	
 	public Robot setAnimer(boolean v){
 		_animer = v;
@@ -75,33 +84,8 @@ public class Robot implements Drawable {
 			}
 			else {
 				p.pause();
-				Robot tmp = this;
-				Animation anim = new Animation(){
-					Robot r = tmp;
-					Vector2 destination = newPos;
-					Vector2 dir = direction;
-					Programme po = p;
-					
-					@Override
-					public boolean run(){
-						boolean retour = false;
-						Vector2 pos = r.getPosition();
-						
-						r.getPosition().add(Vector2.Multiply(dir, Vitesse));
-						if (	dir.getY() < 0 && pos.getY() < destination.getY() ||
-								dir.getY() > 0 && pos.getY() > destination.getY() ||
-								dir.getX() < 0 && pos.getX() < destination.getX() ||
-								dir.getX() > 0 && pos.getX() > destination.getX()){
-							r.setPosition((int)destination.getX(), (int)destination.getY());
-							po.resume();
-							retour =  true;
-						}
-						
-						r.getPanel().repaint();
-						return retour;
-					}
-				};
-				new AnimationThread(anim, 20).start();
+				Animation anim = getAnimDeplacement(newPos, direction, p);
+				new AnimationThread(anim, 10, 300).start();
 			}
 			p.assigner("posx", (int)newPos.getX());
 			p.assigner("posy", (int)newPos.getY());
@@ -118,19 +102,26 @@ public class Robot implements Drawable {
 	 * @param direction : la direction vers laquel il faut tourne, n'accepte que Direction.Gauche et Direction.Droite: les autres ne font rien
 	 * @return le Robot
 	 */
-	public Robot tourner(int direction){
+	public Robot tourner(int direction, Programme p){
 		
+		int dir = 0;
 		switch(direction){
 		case Direction.Droite:
-			_orientation++;
+			dir = 1;
 			break;
 		case Direction.Gauche:
-			_orientation--;
+			dir = -1;
 			break;
 		}
 		
-		_orientation %= 4;
-		if (_orientation < 0) _orientation = 4 + _orientation;
+		if (dir != 0){
+			if (!_animer)
+				_orientation = (4 + _orientation + dir)%4;
+			else {
+				p.pause();
+				new AnimationThread(getAnimRotation(dir, p), 20, 300).start();
+			}
+		}
 		
 		return this;
 	}
@@ -161,6 +152,67 @@ public class Robot implements Drawable {
 	@Override
 	public void setPanel(Panel p){
 		_panel = p;
+	}
+	
+	private Animation getAnimDeplacement(Vector2 dest, Vector2 direction, Programme p){
+		Robot tmp = this;
+		Animation anim = new Animation(){
+			Robot r = tmp;
+			Vector2 destination = dest;
+			Vector2 dir = direction;
+			Programme po = p;
+			
+			@Override
+			public boolean run(){
+				boolean retour = false;
+				Vector2 pos = r.getPosition();
+				
+				r.getPosition().add(Vector2.Multiply(dir, Robot.Vitesse));
+				if (	dir.getY() < 0 && pos.getY() < destination.getY() ||
+						dir.getY() > 0 && pos.getY() > destination.getY() ||
+						dir.getX() < 0 && pos.getX() < destination.getX() ||
+						dir.getX() > 0 && pos.getX() > destination.getX()){
+					r.setPosition((int)destination.getX(), (int)destination.getY());
+					if (po != null)
+						po.resume();
+					retour =  true;
+				}
+				
+				r.getPanel().repaint();
+				return retour;
+			}
+		};
+		return anim;
+	}
+	
+	private Animation getAnimRotation(int direction, Programme p){
+		Robot tmp = this;
+		Animation anim = new Animation(){
+			int dir = direction;
+			Programme pr = p;
+			Robot r = tmp;
+			double progres = 0;
+			int rot = tmp.getOrientation();
+			
+			@Override
+			public boolean run(){
+				boolean retour = false;
+				
+				progres += VitesseRotation;
+				r.setRotation((4 + rot + progres*dir)%4);
+				if (progres >= 1){
+					r.setOrientation((4 + rot + dir)%4);
+					if (pr != null)
+						pr.resume();
+					retour = true;
+				}
+				
+				r.getPanel().repaint();
+				return retour;
+			}
+			
+		};
+		return anim;
 	}
 	
 }

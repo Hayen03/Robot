@@ -36,11 +36,11 @@ public class Tourner extends Instruction {
 		
 		// C'est ici que l'on tourne le robot :)
 		if (n > 0){
-			r.tourner(Direction.Gauche);
+			r.tourner(Direction.Gauche, p);
 			p.assigner("orientation", r.getOrientation());
 		}	
 		else if (n < 0){
-			r.tourner(Direction.Droite);
+			r.tourner(Direction.Droite, p);
 			p.assigner("orientation", r.getOrientation());
 		}
 		

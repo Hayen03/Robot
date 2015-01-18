@@ -15,6 +15,12 @@ public class AnimationThread extends Thread implements ActionListener {
 		_timer = new Timer(refresh, this);
 		this.setDaemon(true);
 	}
+	public AnimationThread(Animation anim, int refresh, int delay){
+		_anim = anim;
+		_timer = new Timer(refresh, this);
+		_timer.setInitialDelay(delay);
+		this.setDaemon(true);
+	}
 	
 	@Override
 	public void run(){
