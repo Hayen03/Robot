@@ -2,12 +2,16 @@ package hayen.robot.graphisme;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class Panel extends JPanel {
+public class Panel extends JPanel implements ActionListener{
 
 	private Drawable[] _obj;
+	private Timer _timer;
 	
 	public Panel(){
 		_obj = new Drawable[0];
@@ -57,6 +61,23 @@ public class Panel extends JPanel {
 		Graphics2D g2 = (Graphics2D)g;
 		for (int i = 0; i < _obj.length; i++)
 			_obj[i].draw(g2);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		repaint();
+	}
+	
+	public void startRefresh(int refreshRate){
+		if (_timer == null)
+			_timer = new Timer(refreshRate, this);
+		else
+			_timer.setDelay(refreshRate);
+		_timer.start();
+	}
+	public void stopRefresh(){
+		if (_timer != null)
+			_timer.stop();
 	}
 	
 }

@@ -40,8 +40,8 @@ public class Transform {
 		return _scale;
 	}
 	
-	public Transform rotate(double rad){
-		_rotation += rad;
+	public Transform rotate(double theta){
+		_rotation += theta;
 		return this;
 	}
 	public Transform translate(Vector2 dep){

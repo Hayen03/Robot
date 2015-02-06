@@ -5,66 +5,58 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 
 import hayen.robot.graphisme.Animation;
-import hayen.robot.graphisme.AnimationThread;
+import hayen.robot.graphisme.Animateur;
 import hayen.robot.graphisme.Drawable;
 import hayen.robot.graphisme.Grille;
 import hayen.robot.graphisme.Panel;
+import hayen.robot.graphisme.Transform;
 import hayen.robot.graphisme.Vector2;
 import hayen.robot.programme.Programme;
 
 public class Robot implements Drawable {
 	
-	public static double Vitesse = 0.05; 
-	public static double VitesseRotation = 0.05;
+	public static double Vitesse = 2; 
+	public static double VitesseRotation = 2;
 	
-	private double _orientation;
-	private Vector2 _position;
+	private Transform _transform;
 	private boolean _animer;
 	private Color _couleur;
+	private Animateur _animateur;
 	
 	private Grille _grille;
 	private Panel _panel;
 	
 	public Robot(Grille grille){
-		_orientation = Direction.Est;
-		_position = new Vector2();
+		_transform = new Transform();
 		_grille = grille;
 		_animer = false;
 		_couleur = Color.blue;
 		_panel = null;
+		_animateur = new Animateur(_transform, null, 20, 300);
 	}
 	
 	/**
 	 * @return la position en x du robot
 	 */
-	public int getX(){ return (int)_position.getX(); }
+	public int getX(){ 
+		return (int)_transform.getPosition().getX(); 
+	}
 	/**
 	 * @return la position en y du robot
 	 */
-	public int getY(){ return (int)_position.getY(); }
+	public int getY(){ 
+		return (int)_transform.getPosition().getY(); 
+	}
 	
-	public Vector2 getPosition(){
-		return _position;
-	}
-	public void setPosition(int x, int y){
-		_position = new Vector2(x, y);
-	}
-	public void setPosition(Vector2 pos){
-		_position = pos;
+	public Transform getTransform(){
+		return _transform;
 	}
 	
 	/**
 	 * @return l'orientation du robot
 	 */
-	public int getOrientation(){ return (int)_orientation; }
-	public void setOrientation(int rot){
-		_orientation = rot;
-	}
-	public void setRotation(double rot){
-		_orientation = rot;
-	}
-	public double getRotation(){
-		return _orientation;
+	public int getOrientation(){ 
+		return (int)_transform.getRotation()%4; 
 	}
 	
 	public Robot setAnimer(boolean v){
@@ -73,19 +65,19 @@ public class Robot implements Drawable {
 	}
 	
 	public boolean avancer(Programme p){
-		Vector2 direction = new Vector2(-(_orientation-1)%2, -(_orientation-2)%2);
-		Vector2 newPos = Vector2.Add(_position, direction).toIntVector();
+		Vector2 direction = new Vector2(-(getOrientation()-1)%2, -(getOrientation()-2)%2);
+		Vector2 newPos = Vector2.Add(_transform.getPosition(), direction).toIntVector();
 		if (newPos.getX() < 0 || newPos.getX() > _grille.getTailleGrille().getX() || newPos.getY() < 0 || newPos.getY() > _grille.getTailleGrille().getY())
 			return false;
 		else{
 			if (!_animer){
-				_position = newPos;
+				_transform.setPosition(newPos);
 				_panel.repaint();
 			}
 			else {
 				p.pause();
 				Animation anim = getAnimDeplacement(newPos, direction, p);
-				new AnimationThread(anim, 10, 300).start();
+				_animateur.playAnimation(anim);
 			}
 			p.assigner("posx", (int)newPos.getX());
 			p.assigner("posy", (int)newPos.getY());
@@ -116,10 +108,11 @@ public class Robot implements Drawable {
 		
 		if (dir != 0){
 			if (!_animer)
-				_orientation = (4 + _orientation + dir)%4;
+				_transform.setRotation((int)((4 + _transform.getRotation() + dir)%4));
 			else {
+//				System.out.println("ANIMATION TOURNANT COMMENCER!");
 				p.pause();
-				new AnimationThread(getAnimRotation(dir, p), 20, 300).start();
+				_animateur.playAnimation(getAnimRotation(dir, p));
 			}
 		}
 		
@@ -127,7 +120,7 @@ public class Robot implements Drawable {
 	}
 	
 	public Vector2 getPositionAbsolue(){
-		return Vector2.Multiply(_position, Grille.TailleCarre + Grille.EspaceEntreCase).add(new Vector2(Grille.TailleCarre/2 + Grille.EspaceEntreCase, Grille.TailleCarre/2 + Grille.EspaceEntreCase));
+		return Vector2.Multiply(_transform.getPosition(), Grille.TailleCarre + Grille.EspaceEntreCase).add(new Vector2(Grille.TailleCarre/2 + Grille.EspaceEntreCase, Grille.TailleCarre/2 + Grille.EspaceEntreCase));
 	}
 	
 	@Override
@@ -139,10 +132,11 @@ public class Robot implements Drawable {
 		int[] xs = {centre[0]-15, centre[0]+15, centre[0]-15}, ys = {centre[1]+15, centre[1], centre[1]-15};
 		Polygon robot = new Polygon(xs, ys, 3);
 		
-		double theta = Math.toRadians(90 * _orientation);
+		double theta = Math.toRadians(90 * _transform.getRotation());
 		
 		g2.rotate(theta, centre[0], centre[1]);
 		g2.fillPolygon(robot);
+		g2.drawPolygon(robot);
 		g2.rotate(-theta, centre[0], centre[1]);
 	}
 	@Override
@@ -155,60 +149,55 @@ public class Robot implements Drawable {
 	}
 	
 	private Animation getAnimDeplacement(Vector2 dest, Vector2 direction, Programme p){
-		Robot tmp = this;
 		Animation anim = new Animation(){
-			Robot r = tmp;
-			Vector2 destination = dest;
+			double f = 0;
 			Vector2 dir = direction;
 			Programme po = p;
 			
 			@Override
-			public boolean run(){
-				boolean retour = false;
-				Vector2 pos = r.getPosition();
+			public boolean run(Transform obj, int dt){
+				double dep = ((double)dt/1000)*Robot.Vitesse;
+				double r = 1-f;
+				if (dep > r)
+					dep = r;
+				obj.translate(Vector2.Multiply(dir, dep));
+				f += dep;
 				
-				r.getPosition().add(Vector2.Multiply(dir, Robot.Vitesse));
-				if (	dir.getY() < 0 && pos.getY() < destination.getY() ||
-						dir.getY() > 0 && pos.getY() > destination.getY() ||
-						dir.getX() < 0 && pos.getX() < destination.getX() ||
-						dir.getX() > 0 && pos.getX() > destination.getX()){
-					r.setPosition((int)destination.getX(), (int)destination.getY());
-					if (po != null)
-						po.resume();
-					retour =  true;
+				if (f >= 1){
+					po.resume();
+					return true;
 				}
-				
-				r.getPanel().repaint();
-				return retour;
+				else
+					return false;
+
 			}
 		};
 		return anim;
 	}
 	
 	private Animation getAnimRotation(int direction, Programme p){
-		Robot tmp = this;
 		Animation anim = new Animation(){
+			
+			double f = 0;
 			int dir = direction;
-			Programme pr = p;
-			Robot r = tmp;
-			double progres = 0;
-			int rot = tmp.getOrientation();
+			Programme po = p;
 			
 			@Override
-			public boolean run(){
-				boolean retour = false;
+			public boolean run(Transform obj, int dt){
+				double dep = ((double)dt/1000)*Robot.VitesseRotation;
+				double r = 1-f;
+				if (dep > r)
+					dep = r;
+				obj.rotate(dep*dir);
+				f += dep;
 				
-				progres += VitesseRotation;
-				r.setRotation((4 + rot + progres*dir)%4);
-				if (progres >= 1){
-					r.setOrientation((4 + rot + dir)%4);
-					if (pr != null)
-						pr.resume();
-					retour = true;
+				if (f >= 1){
+					po.resume();
+					return true;
 				}
-				
-				r.getPanel().repaint();
-				return retour;
+				else
+					return false;
+
 			}
 			
 		};
@@ -216,3 +205,4 @@ public class Robot implements Drawable {
 	}
 	
 }
+

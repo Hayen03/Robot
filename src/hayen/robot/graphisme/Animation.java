@@ -1,5 +1,5 @@
 package hayen.robot.graphisme;
 
 public interface Animation {
-	public boolean run();
+	public boolean run(Transform obj, int dt);
 }

@@ -117,6 +117,8 @@ public class Main {
 		pa.addObject(g);
 		pa.addObject(r);
 		pa.setPreferredSize(g.getPreferredSize());
+		pa.startRefresh(10);
+		
 		r.setAnimer(true);
 		f.setTitle("TEST");
 		f.setLayout(new BoxLayout(f.getContentPane(), BoxLayout.Y_AXIS));
