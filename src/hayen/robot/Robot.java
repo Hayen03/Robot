@@ -188,7 +188,7 @@ public class Robot implements Drawable {
 				double r = 1-f;
 				if (dep > r)
 					dep = r;
-				obj.rotate(dep*dir);
+				obj.setRotation((4 + obj.getRotation() + dir*dep)%4);
 				f += dep;
 				
 				if (f >= 1){
