@@ -32,4 +32,11 @@ public class Util {
 		return false;
 	}
 	
+	public static String Array2String(Object[] a){
+		String s = "[";
+		for (Object o : a)
+			s += o + ", ";
+		return s + "]";
+	}
+	
 }

@@ -132,7 +132,7 @@ public class Compilateur2 {
 		int v = 0; // l'indice du vecteur de variable à utiliser
 		Vector<Vector<String>> var = new Vector<Vector<String>>();
 		var.add(new Vector<String>());
-		
+
 		final int Main = 0, Condition = 1, Boucle = 2, Sinon = 3;
 		Vector<Integer> typeBloc = new Vector<Integer>();
 		typeBloc.add(Main);
@@ -207,7 +207,7 @@ public class Compilateur2 {
 				}
 
 				/* ---------------------------------------------------- CONDITION ----------------------------------------------- */
-				else if (premierMot.equals(motCondition)){
+				else if (premierMot.equals(motCondition)){ //TODO
 					/*
 					 * 1.1- Compter le nombre de terme suivant l'opérateur
 					 * 1.2- S'il est égal à 0, retourner une erreur
@@ -217,9 +217,90 @@ public class Compilateur2 {
 					 * 5.1- générer le nouveau vecteur de variable
 					 * 5.2- changer le type de bloc
 					 */
+
+					// 1
+					if (inst.length == 1)
+						return null; // ERREUR 
+
+					// 2
+					Object[] op1 = null, op2 = null;
+					char op = 0;
+					int i = 1;
+					Vector<Object> tmp = new Vector<Object>();
+					while (i < inst.length){ // op1 & op
+						String m = inst[i];
+						if (m.equals(comparaisonEgal)){
+							op = hayen.robot.programme.instruction.Condition.Egal;
+							break;
+						}
+						else if (m.equals(comparaisonGrand)){
+							op = hayen.robot.programme.instruction.Condition.PlusGrandQue;
+							break;
+						}
+						else if (m.equals(comparaisonPetit)){
+							op = hayen.robot.programme.instruction.Condition.PlusPetitQue;
+							break;
+						}
+						else { // terme de l'opération 1
+							if (m.equals(operateurAdd))
+								tmp.add(Assigner.opAdd);
+							else if (m.equals(operateurDiv))
+								tmp.add(Assigner.opDiv);
+							else if (m.equals(operateurMin))
+								tmp.add(Assigner.opMin);
+							else if (m.equals(operateurMod))
+								tmp.add(Assigner.opMod);
+							else if (m.equals(operateurMul))
+								tmp.add(Assigner.opMul);
+							else if (Util.isDigit(m))
+								tmp.add(Integer.parseInt(m));
+							else if (estDeclarer(var, m))
+								tmp.add(m);
+							else
+								return null; // ERREUR
+						}
+						i++;
+					}
+					op1 = tmp.toArray();
+					tmp.clear();
+					while (i < inst.length){ // op2
+						String m = inst[i];
+						if (m.equals(comparaisonEgal) || m.equals(comparaisonPetit) || m.equals(comparaisonGrand))
+							return null; // ERREUR
+						else { // terme de l'opération 1
+							if (m.equals(operateurAdd))
+								tmp.add(Assigner.opAdd);
+							else if (m.equals(operateurDiv))
+								tmp.add(Assigner.opDiv);
+							else if (m.equals(operateurMin))
+								tmp.add(Assigner.opMin);
+							else if (m.equals(operateurMod))
+								tmp.add(Assigner.opMod);
+							else if (m.equals(operateurMul))
+								tmp.add(Assigner.opMul);
+							else if (Util.isDigit(m))
+								tmp.add(Integer.parseInt(m));
+							else if (estDeclarer(var, m))
+								tmp.add(m);
+							else
+								return null; // ERREUR
+						}
+						i++;
+					}
+					op2 = tmp.toArray();
+					if (op1.length == 0 || op2.length == 0 || op == 0)
+						return null; //ERREUR
 					
-					//1.1
+					// 3
+					if (!(verifierOperation(op1) || verifierOperation(op2)))
+						return null; // ERREUR
 					
+					// 4
+					instructions.add(new Condition(op1, op, op2));
+					
+					// 5
+					var.add(new Vector<String>());
+					typeBloc.add(Condition);
 					
 				}
 
@@ -516,6 +597,22 @@ public class Compilateur2 {
 			j--;
 		}
 		return false;
+	}
+
+	private static boolean verifierOperation(Object[] terme){
+		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
+		// format nb op nb op nb ...
+		if (terme.length%2 == 0)
+			return false;
+		boolean op = true;
+		int i = 0;
+		while (i < terme.length){
+			if (op == terme[i].getClass().equals(Character.class))
+				return false;
+			op = !op;
+			i++;
+		}
+		return true;
 	}
 	
 }

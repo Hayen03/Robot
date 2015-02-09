@@ -1,24 +1,24 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Bloc;
+import hayen.robot.util.Util;
 
 public class Condition extends Instruction {
 	
 	private static final long serialVersionUID = -3241751628795007765L;
 	
-	private Object[] _expression;
-	private Bloc _blocSi;
-	private Bloc _blocSinon;
+	public static final char PlusGrandQue = '>';
+	public static final char PlusPetitQue = '<';
+	public static final char Egal = '=';
 	
-	public Condition(Bloc blocSi, Bloc blocSinon,Object... params){
-		_expression = params;
-		_blocSi = blocSi;
-		_blocSinon = blocSinon;
-	}
-	public Condition(Bloc blocSi, Object...params){
-		_expression = params;
-		_blocSi = blocSi;
-		_blocSinon = null;
+	private Object[] _op1;
+	private Object[] _op2;
+	private char _op;
+	
+	public Condition(Object[] op1, char op, Object[] op2){
+		_op = op;
+		_op1 = op1;
+		_op2 = op2;
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class Condition extends Instruction {
 	
 	@Override
 	public String toString(){
-		return "Condition: (" + _expression + ")"; 
+		return "Condition: (" + Util.Array2String(_op1) + " " + _op + " " + Util.Array2String(_op2) + ")"; 
 	}
 
 }

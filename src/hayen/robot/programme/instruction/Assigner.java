@@ -1,10 +1,17 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Bloc;
+import hayen.robot.programme.Programme;
 
 public class Assigner extends Instruction {
 	
 	private static final long serialVersionUID = -1252954201912565150L;
+	
+	public static final char opAdd = '+';
+	public static final char opMin = '-';
+	public static final char opMul = '*';
+	public static final char opDiv = '/';
+	public static final char opMod = '%';
 	
 	private String[] _ids;
 	private Object[] _termes;
@@ -84,6 +91,14 @@ public class Assigner extends Instruction {
 		String s = "Assign: ";
 		for (String n : _ids) s += n + ", ";
 		return s;
+	}
+	
+	public static int evaluer(Object[] terme, Programme p){
+		int resultat;
+		
+		
+		
+		return 0;
 	}
 
 }

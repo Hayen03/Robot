@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 //import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.Hashtable;
 
 import hayen.robot.Direction;
 import hayen.robot.Robot;
@@ -12,20 +13,31 @@ import hayen.robot.graphisme.Console;
 import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.instruction.*;
 
-public class Programme extends Bloc implements Runnable{
+public class Programme implements Runnable{
 	
 	private Grille _grille;
 	private Console _console;
 	private Thread _thread = null;
 	private boolean _paused = false;
 	
+	protected final Instruction[] _instructions;
+	protected Hashtable<String, Integer> _variables;
+	protected int _ligne;
+	protected final int _longueur;
+	
 	public Programme(Instruction[] instructions){
-		super(instructions);
+		
+		_instructions = instructions;
+		_variables = new Hashtable<String, Integer>();
+		_ligne = 0;
+		_longueur = _instructions.length;
+		
 		_grille = null;
 		_console = null;
 	}
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
-		super(getInstructionsFromFichier(adresse));
+		_instructions = getInstructionsFromFichier(adresse);
+		
 		_grille = null;
 		_console = null;
 	}
@@ -64,8 +76,8 @@ public class Programme extends Bloc implements Runnable{
 		return _console;
 	}
 	
-	private static Bloc getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
-		Bloc instructions;
+	private static Instruction[] getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
+		Instruction[] instructions;
 		if (adresse.endsWith(".pr")){
 			instructions = Compilateur.compileFichier(adresse);
 		}
