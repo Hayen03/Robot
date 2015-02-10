@@ -132,4 +132,11 @@ public class Programme implements Runnable{
 		return _paused;
 	}
 	
+	public void assigner(String id, int n){
+		_variables.put(id, n);
+	}
+	public int getVariable(String id){
+		return _variables.get(id);
+	}
+	
 }
