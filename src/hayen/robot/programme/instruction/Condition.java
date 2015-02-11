@@ -1,6 +1,6 @@
 package hayen.robot.programme.instruction;
 
-import hayen.robot.programme.Bloc;
+import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
 public class Condition extends Instruction {
@@ -23,65 +23,23 @@ public class Condition extends Instruction {
 
 	@Override
 	public boolean executer(Object... params){
-		Bloc b = (Bloc)params[0];
-//		System.out.print("<COMPARE ");
-		boolean vrai = comparerExpression(b, _expression);
-//		System.out.print("<" + b + ">");
-		if (vrai) 
-			return _blocSi.setParent(b).executer();
-		else if (_blocSinon != null) 
-			return _blocSinon.setParent(b).executer();
-		else
-			return true;
+		Programme p = (Programme)params[0];
+		int a = Assigner.evaluer(_op1, p);
+		int b = Assigner.evaluer(_op2, p);
+		
+		return comparerExpression(a, b, _op);
 	}
 	
-	public static boolean comparerExpression(Bloc p, Object... termes){
-		
-		if (termes.length == 1){
-			int val;
-			if (termes[0].getClass().equals(Integer.class))
-				val = (Integer)termes[0];
-			else
-				val = p.getVariable((String)termes[0]);
-			return val > 0;
-		}
-		
-		boolean retour = true;
-		int t1, t2, i = 0;
-		char op;
-		Object buffer;
-		
-		buffer = termes[i++];
-		if (buffer.getClass().equals(Integer.class))
-			t1 = (Integer)buffer;
-		else
-			t1 = p.getVariable((String)buffer);
-		
-		do{
-			op = (Character)termes[i++];
-			
-			buffer = termes[i++];
-			if (buffer.getClass().equals(Integer.class))
-				t2 = (Integer)buffer;
-			else
-				t2 = p.getVariable((String)buffer);
-			
+	public static boolean comparerExpression(int a, int b, char op){
 			switch (op){
-			case '<':
-				retour = retour && (t1 < t2);
-				break;
-			case '>':
-				retour = retour && (t1 > t2);
-				break;
-			case '=':
-				retour = retour && (t1 == t2);
-				break;
+			case PlusPetitQue:
+				return (a < b);
+			case PlusGrandQue:
+				return (a > b);
+			case Egal:
+				return (a == b);
 			}
-			
-			t1 = t2;
-		} while (i < termes.length);
-		
-		return retour;
+			return false;
 	}
 	
 	@Override

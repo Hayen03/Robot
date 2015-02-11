@@ -3,6 +3,7 @@ package hayen.robot;
 import java.awt.HeadlessException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -11,73 +12,20 @@ import javax.swing.JOptionPane;
 import hayen.robot.graphisme.Console;
 import hayen.robot.graphisme.Grille;
 import hayen.robot.graphisme.Panel;
-import hayen.robot.programme.Bloc;
-import hayen.robot.programme.Compilateur;
 import hayen.robot.programme.FichierIncorrectException;
 import hayen.robot.programme.OperationInvalideException;
 import hayen.robot.programme.Programme;
+import hayen.robot.programme.instruction.Assigner;
 public class Main {
 
 	// FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException
 	public static void main(String[] args) throws InterruptedException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException {
-		if (args.length == 0) defaut2();
+//		defaut2();
 		
-		else if (args[0].equals("-c") || args[0].equals("compile")){ // si on veut compiler un fichier
-			Bloc instructions;
-			try {
-				instructions = Compilateur.compileFichier(args[1]);
-			} catch (IOException e) {
-				System.err.println("Erreur lors de la lecture du fichier");
-				e.printStackTrace();
-				return;
-			} catch (ArrayIndexOutOfBoundsException e){
-				System.err.println("L'adresse du fichier de depart est absente");
-				return;
-			} catch (FichierIncorrectException e){
-				System.err.println("Extension du premier fichier incorecte (requiert .pr)");
-				return;
-			} catch (OperationInvalideException e) {
-				e.printStackTrace();
-				return;
-			}
-
-			try {
-				Compilateur.compileVersFichier(args[2], instructions);
-			} catch (IOException e) {
-				System.err.println("Erreur lors de l'écriture du fichier");
-				e.printStackTrace();
-				return;
-			} catch (ArrayIndexOutOfBoundsException e){
-				System.err.println("L'adresse du fichier final est absente");
-				return;
-			}
-
-			System.out.println("compilation terminée");
-
-		}
-		else if (args[0].equals("run")){
-			Programme p;
-			try {
-				p = new Programme(args[1]);
-			} catch (IOException e) {
-				System.err.println("Erreur lors de la lecture du fichier");
-				e.printStackTrace();
-				return;
-			} catch (ArrayIndexOutOfBoundsException e){
-				System.err.println("L'adresse du fichier est absente");
-				return;
-			} catch (FichierIncorrectException e){
-				System.err.println("Extension du fichier incorecte (requiert .pr/.prc)");
-				return;
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-				return;
-			} catch (OperationInvalideException e) {
-				e.printStackTrace();
-				return;
-			}
-			p.executer();
-		}
+		Object[] op = {'(', 1, '+', "vachon", ')', '*', '(', 4, '-', '(',  5, '/', 3, ')', ')'};
+		Hashtable<String, Integer> v = new Hashtable<String, Integer>();
+		v.put("vachon", 2);
+		Assigner.evaluer(op, v);
 	}
 	
 	public static void defaut1() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{

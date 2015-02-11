@@ -2,7 +2,6 @@ package hayen.robot.programme.instruction;
 
 import hayen.robot.Direction;
 import hayen.robot.Robot;
-import hayen.robot.programme.Bloc;
 import hayen.robot.programme.Programme;
 
 public class Tourner extends Instruction {
@@ -18,10 +17,10 @@ public class Tourner extends Instruction {
 		_direction = d;
 	}
 	
+	// TODO: va être à réparer parce que je vais le briser dans pas long
 	@Override
 	public boolean executer(Object... params) {
-		Bloc b = (Bloc)params[0];
-		Programme p = b.getProgramme();
+		Programme p = (Programme)params[0];
 		Robot r = p.getGrille().getRobot();
 		int n;
 		if (_direction.getClass().equals(Integer.class))

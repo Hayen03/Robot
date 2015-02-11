@@ -3,7 +3,6 @@ package hayen.robot.programme;
 import hayen.robot.programme.instruction.Afficher;
 import hayen.robot.programme.instruction.Assigner;
 import hayen.robot.programme.instruction.Avancer;
-import hayen.robot.programme.instruction.Boucle;
 import hayen.robot.programme.instruction.Condition;
 import hayen.robot.programme.instruction.Declarer;
 import hayen.robot.programme.instruction.Instruction;
@@ -96,7 +95,7 @@ public class Compilateur2 {
 	 * @param instructions : le bloc d'instructions à enregistrer
 	 * @throws IOException
 	 */
-	public static void compileVersFichier(String adresse, Bloc instructions) throws IOException{
+	public static void compileVersFichier(String adresse, Instruction[] instructions) throws IOException{
 		ObjectOutputStream fichier = new ObjectOutputStream(new FileOutputStream(adresse));
 		fichier.writeObject(version);
 		fichier.writeObject(instructions);

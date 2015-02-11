@@ -1,6 +1,6 @@
 package hayen.robot.programme.instruction;
 
-import hayen.robot.programme.Bloc;
+import hayen.robot.programme.Programme;
 
 public class Declarer extends Instruction {
 	
@@ -14,7 +14,7 @@ public class Declarer extends Instruction {
 
 	@Override
 	public boolean executer(Object... params){
-		Bloc p = (Bloc)params[0];
+		Programme p = (Programme)params[0];
 		for (String n : _nom) p.assigner(n, 0);
 		return true;
 	}

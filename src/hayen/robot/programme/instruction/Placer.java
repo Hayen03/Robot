@@ -1,7 +1,6 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Programme;
-import hayen.robot.programme.Bloc;
 
 public class Placer extends Instruction {
 	private static final long serialVersionUID = 6363226372474144372L;
@@ -12,9 +11,10 @@ public class Placer extends Instruction {
 		_placer = placer;
 	}
 	
+	// TODO: réparer lorsque je vais le briser
 	@Override
 	public boolean executer(Object... params) {
-		Programme p = ((Bloc)params[0]).getProgramme();
+		Programme p = (Programme)params[0];
 		p.getGrille().setCaseActif(_placer);
 		return true;
 	}

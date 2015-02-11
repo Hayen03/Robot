@@ -37,17 +37,12 @@ public class Programme implements Runnable{
 	}
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
 		_instructions = getInstructionsFromFichier(adresse);
-		
-		_grille = null;
-		_console = null;
-	}
-	public Programme(Bloc original){
-		super(original);
+		_longueur = _instructions.length;
 		_grille = null;
 		_console = null;
 	}
 	
-	public Programme setGrille(Grille g){
+	public Programme setGrille(Grille g){ // TODO Il y aura surement des modifications à apporter ici
 		_grille = g;
 		Robot r = g.getRobot();
 		assigner("largeur", (int)g.getTailleGrille().getX());
@@ -76,16 +71,17 @@ public class Programme implements Runnable{
 		return _console;
 	}
 	
+	// TODO Il y a beaucoup de chose à changer ici
 	private static Instruction[] getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
 		Instruction[] instructions;
 		if (adresse.endsWith(".pr")){
-			instructions = Compilateur.compileFichier(adresse);
+			instructions = Compilateur2.compileFichier(adresse);
 		}
 		else if (!adresse.endsWith(".prc")) throw new FichierIncorrectException("Fichier invalide");
 		else{
 			ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
 			String version = fichier.readUTF();
-			if (version.equals(Compilateur.version)) instructions = (Bloc)fichier.readObject();
+			if (version.equals(Compilateur2.version)) instructions = (Instruction[])fichier.readObject();
 			else{
 				fichier.close();
 				throw new FichierIncorrectException("Version trop ancienne du compilateur");
@@ -96,8 +92,8 @@ public class Programme implements Runnable{
 		return instructions;
 	}
 	
-	@Override
-	public boolean executer(Object... params){
+	// TODO Encore beaucoup de chose à changer
+	public boolean executer(){
 		int i = 0;
 		while (i < _instructions.length){
 			if (!_paused){
@@ -114,13 +110,15 @@ public class Programme implements Runnable{
 	public void run() {
 		executer();
 	}
-	public void start(){
+	
+	// TODO ici aussi (toutes les méthode ci-dessous)
+	public void start(){ 
 //		System.out.print("Started: ");
 		_paused = false;
 		_thread = new Thread(this);
 		_thread.start();
 	}
-	public void pause(){
+	public void pause(){ 
 		_paused = true;
 //		System.out.println("paused;");
 	}
