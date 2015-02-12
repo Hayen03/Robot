@@ -109,7 +109,7 @@ public class Compilateur2 {
 		Vector<Vector<String>> var = new Vector<Vector<String>>();
 		var.add(new Vector<String>());
 
-		final int Main = 0, Condition = 1, Boucle = 2, Sinon = 3;
+		final int Main = -1, Condition = -2, Sinon = -3; // >= 0 pour une boucle (numéro de la ligne)
 		Vector<Integer> typeBloc = new Vector<Integer>();
 		typeBloc.add(Main);
 
@@ -178,7 +178,7 @@ public class Compilateur2 {
 				}
 
 				/* ----------------------------------------------- CONDITION & BOUCLE ------------------------------------------- */
-				else if (premierMot.equals(motCondition) || premierMot.equals(motBoucle)){ //TODO
+				else if (premierMot.equals(motCondition) || premierMot.equals(motBoucle)){
 					/*
 					 * 1.1- Compter le nombre de terme suivant l'opérateur
 					 * 1.2- S'il est égal à 0, retourner une erreur
@@ -271,7 +271,7 @@ public class Compilateur2 {
 					
 					// 5
 					var.add(new Vector<String>());
-					typeBloc.add(premierMot.equals(motCondition) ? Condition : Boucle);
+					typeBloc.add(premierMot.equals(motCondition) ? Condition : _ln);
 					
 				}
 
@@ -310,10 +310,9 @@ public class Compilateur2 {
 					
 					if (typeBloc.get(typeBloc.size()-1).equals(Main))
 						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
-					else {
-						if (typeBloc.get(typeBloc.size()-1).equals(Boucle)){
-							// TODO: aller chercher le numéro de ligne de la boucle approprié
-						}
+					else { 
+						if (typeBloc.get(typeBloc.size()-1).intValue() >= 0)
+							instructions.add(new Fin(typeBloc.get(typeBloc.size()-1)-x));
 						else
 							instructions.add(new Fin(Fin.codeFinCondition));
 						var.remove(var.size()-1);

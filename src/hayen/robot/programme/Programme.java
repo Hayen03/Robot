@@ -70,7 +70,16 @@ public class Programme {
 	}
 	
 	public Instruction getProchaineInstruction(){
-		return _instructions[_ligne++];
+		if (_ligne >= _instructions.length)
+			return null;
+		else
+			return _instructions[_ligne++];
+	}
+	public Instruction getInstructionA(int ln){
+		if (ln >= _instructions.length)
+			return null;
+		else
+			return _instructions[ln];
 	}
 	public int getLigne(){
 		return _ligne;

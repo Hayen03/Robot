@@ -26,7 +26,26 @@ public class Condition extends Instruction {
 		int a = Util.evaluer(_op1, p);
 		int b = Util.evaluer(_op2, p);
 		
-//		return Util.comparerExpression(a, b, _op); // TODO: changement de ligne du programme
+		boolean v = Util.comparerExpression(a, b, _op);
+		if (!v){ // si v est faux, on va au fin correspondant
+			Instruction i = null;
+			int n = 0;
+			while (i == null){
+				i = p.getProchaineInstruction();
+				if (i.getClass().equals(Fin.class)){
+					if (n != 0){
+						n--;
+						i = null;
+					}
+				}
+				else if (i.getClass().equals(Condition.class)){
+					n++;
+					i = null;
+				}
+			}
+		}
+		// sinon, on ne fait rien et le programme passe à la ligne suivante
+		// + peut-être dire au programme qu'il rentre dans un nouveau bloc
 	}
 	
 	@Override
