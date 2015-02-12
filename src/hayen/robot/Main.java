@@ -14,7 +14,7 @@ public class Main {
 			System.out.print(obj + " ");
 		System.out.println(" = ");
 		Hashtable<String, Integer> v = new Hashtable<String, Integer>();
-		v.put("vachon", 2);
+		v.put("vachon", 4);
 		System.out.println(Util.evaluer(o, v));
 	}
 	
