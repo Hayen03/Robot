@@ -26,7 +26,7 @@ public class Util {
 		return retour;
 	}
 	
-	public static boolean contains(Object[] array, Object obj){
+	public static <T> boolean contains(T[] array, T obj){
 		int i = 0;
 		while (i < array.length){
 			if (array[i].equals(obj))

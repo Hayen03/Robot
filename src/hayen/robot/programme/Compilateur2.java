@@ -4,6 +4,7 @@ import hayen.robot.programme.instruction.Afficher;
 import hayen.robot.programme.instruction.Assigner;
 import hayen.robot.programme.instruction.Avancer;
 import hayen.robot.programme.instruction.Condition;
+import hayen.robot.programme.instruction.Fin;
 import hayen.robot.programme.instruction.Instruction;
 import hayen.robot.programme.instruction.Placer;
 import hayen.robot.programme.instruction.Tourner;
@@ -105,7 +106,6 @@ public class Compilateur2 {
 	private static Instruction[] compile(String[] texte) throws OperationInvalideException{
 		Vector<Instruction> instructions = new Vector<Instruction>();
 
-		int v = 0; // l'indice du vecteur de variable à utiliser
 		Vector<Vector<String>> var = new Vector<Vector<String>>();
 		var.add(new Vector<String>());
 
@@ -115,7 +115,7 @@ public class Compilateur2 {
 
 		_ln = 0; // le numero de la ligne
 		int x = 0; // le nombre de ligne sauté
-		do {
+		while (_ln < texte.length){
 
 			// séparer la ligne en mot
 			String[] inst = separe(texte[_ln]);
@@ -177,13 +177,8 @@ public class Compilateur2 {
 						throw new OperationInvalideException("ERREUR: expression invalide (une déclaration doit être fait sous la forme: var <nom>)\n" + "ln." + (_ln+1));
 				}
 
-				/* ---------------------------------------------------- BOUCLE ----------------------------------------------- */
-				else if (premierMot.equals(motBoucle)){ // fonctionne de la même manière qu'un condition
-					// TODO
-				}
-
-				/* ---------------------------------------------------- CONDITION ----------------------------------------------- */
-				else if (premierMot.equals(motCondition)){ //TODO
+				/* ----------------------------------------------- CONDITION & BOUCLE ------------------------------------------- */
+				else if (premierMot.equals(motCondition) || premierMot.equals(motBoucle)){ //TODO
 					/*
 					 * 1.1- Compter le nombre de terme suivant l'opérateur
 					 * 1.2- S'il est égal à 0, retourner une erreur
@@ -276,7 +271,7 @@ public class Compilateur2 {
 					
 					// 5
 					var.add(new Vector<String>());
-					typeBloc.add(Condition);
+					typeBloc.add(premierMot.equals(motCondition) ? Condition : Boucle);
 					
 				}
 
@@ -289,7 +284,19 @@ public class Compilateur2 {
 					 * 4- changer le vecteur de variable
 					 * 5- changer le type de bloc
 					 */
-					// TODO
+					
+					if (!typeBloc.get(typeBloc.size()-1).equals(Condition) || inst.length > 1)
+						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
+					else {
+						instructions.add(new Fin(Fin.codeSinon));
+						
+						var.remove(var.size()-1);
+						typeBloc.remove(typeBloc.size()-1);
+						
+						var.add(new Vector<String>());
+						typeBloc.add(Sinon);
+					}
+					
 				}
 
 				/* ---------------------------------------------------- FIN ----------------------------------------------- */
@@ -300,7 +307,19 @@ public class Compilateur2 {
 					 * 3- enlever une couche du vecteur de variable
 					 * 4- changer le type de bloc
 					 */
-					// TODO
+					
+					if (typeBloc.get(typeBloc.size()-1).equals(Main))
+						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
+					else {
+						if (typeBloc.get(typeBloc.size()-1).equals(Boucle)){
+							// TODO: aller chercher le numéro de ligne de la boucle approprié
+						}
+						else
+							instructions.add(new Fin(Fin.codeFinCondition));
+						var.remove(var.size()-1);
+						typeBloc.remove(typeBloc.size()-1);
+					}
+					
 				}
 
 				/* ---------------------------------------------------- AVANCER/PLACER/ENLEVER ----------------------------------------------- */
@@ -419,7 +438,7 @@ public class Compilateur2 {
 
 				_ln++;
 			}
-		} while (_ln < texte.length);
+		}
 
 		return instructions.toArray(new Instruction[instructions.size()]);
 	}
@@ -515,10 +534,7 @@ public class Compilateur2 {
 	 * @return vrai si m est reservé, faux autrement
 	 */
 	public static boolean isMotReserve(String m){
-		for (String mr : motReserve){
-			if (mr.equals(m)) return true;
-		}
-		return false;
+		return Util.contains(motReserve, m);
 	}
 
 	/**
@@ -533,6 +549,12 @@ public class Compilateur2 {
 		return mot;
 	}
 
+	/**
+	 * Vérifie que la variable id a bel et bien été déclaré
+	 * @param var : les variables qui ont été déclarer
+	 * @param id : l'identificateur de la variale à vérifier
+	 * @return true si la variable a été déclaré, sinon false
+	 */
 	private static boolean estDeclarer(Vector<Vector<String>> var, String id){
 		int j = var.size()-1;
 		while (j >= 0){
@@ -543,6 +565,11 @@ public class Compilateur2 {
 		return false;
 	}
 
+	/**
+	 * Vérifie qu'une expression arithmétique est correctement composé. Ne vérifie pas les variables
+	 * @param terme : l'expression à vérifier
+	 * @return true si l'expression est correct, sinon false
+	 */
 	private static boolean verifierOperation(Object[] terme){
 		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
 		// format nb op nb op nb ...
@@ -558,6 +585,13 @@ public class Compilateur2 {
 		}
 		return true;
 	}
+	/**
+	 * Vérifie qu'une expression arithmétique est correctement composé. Vérifie les variables
+	 * @param terme : l'expression à vérifier
+	 * @param var : les variables déclarer
+	 * @return true si l'expression est correct, sinon false
+	 * @throws OperationInvalideException si une variable n'était pas déclarer
+	 */
 	private static boolean verifierOperation(Object[] terme, Vector<Vector<String>> var) throws OperationInvalideException{
 		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
 		// format nb op nb op nb ...

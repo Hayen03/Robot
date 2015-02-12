@@ -14,7 +14,6 @@ public class Programme {
 	
 	private Application _app;
 	private Console _console;
-	private boolean _paused = false;
 	
 	protected final Instruction[] _instructions;
 	protected Hashtable<String, Integer> _variables;
