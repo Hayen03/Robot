@@ -1,6 +1,7 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.graphisme.Console;
+import hayen.robot.programme.Application;
 import hayen.robot.programme.Compilateur2;
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
@@ -14,8 +15,8 @@ public class Afficher extends Instruction {
 	}
 
 	@Override
-	public boolean executer(Object... params){
-		Programme p = (Programme)params[0];
+	public void executer(Application app){
+		Programme p = app.getProgramme();
 		boolean car = false;
 		String buffer = "";
 		int v;
@@ -45,7 +46,6 @@ public class Afficher extends Instruction {
 		else
 			c.print(buffer);
 
-		return true;
 	}
 
 	@Override

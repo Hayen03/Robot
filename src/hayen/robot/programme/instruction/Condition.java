@@ -1,5 +1,6 @@
 package hayen.robot.programme.instruction;
 
+import hayen.robot.programme.Application;
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
@@ -20,12 +21,12 @@ public class Condition extends Instruction {
 	}
 
 	@Override
-	public boolean executer(Object... params){
-		Programme p = (Programme)params[0];
+	public void executer(Application app){
+		Programme p = app.getProgramme();
 		int a = Util.evaluer(_op1, p);
 		int b = Util.evaluer(_op2, p);
 		
-		return Util.comparerExpression(a, b, _op);
+//		return Util.comparerExpression(a, b, _op); // TODO: changement de ligne du programme
 	}
 	
 	@Override

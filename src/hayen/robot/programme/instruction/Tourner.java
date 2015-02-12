@@ -2,6 +2,7 @@ package hayen.robot.programme.instruction;
 
 import hayen.robot.Direction;
 import hayen.robot.Robot;
+import hayen.robot.programme.Application;
 import hayen.robot.programme.Programme;
 
 public class Tourner extends Instruction {
@@ -17,9 +18,9 @@ public class Tourner extends Instruction {
 	
 	// TODO: va être à réparer parce que je vais le briser dans pas long
 	@Override
-	public boolean executer(Object... params) {
-		Programme p = (Programme)params[0];
-		Robot r = p.getGrille().getRobot();
+	public void executer(Application app) {
+		Programme p = app.getProgramme();
+		Robot r = app.getRobot();
 		int n;
 		if (_direction.getClass().equals(Integer.class))
 			n = (Integer)_direction;
@@ -41,7 +42,6 @@ public class Tourner extends Instruction {
 			p.assigner("orientation", r.getOrientation());
 		}
 		
-		return true;
 	}
 
 }

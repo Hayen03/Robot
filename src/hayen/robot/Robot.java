@@ -75,7 +75,7 @@ public class Robot implements Drawable {
 				_panel.repaint();
 			}
 			else {
-				p.pause();
+//				p.pause();
 				Animation anim = getAnimDeplacement(newPos, direction, p);
 				_animateur.playAnimation(anim);
 			}
@@ -111,7 +111,7 @@ public class Robot implements Drawable {
 				_transform.setRotation((int)((4 + _transform.getRotation() + dir)%4));
 			else {
 //				System.out.println("ANIMATION TOURNANT COMMENCER!");
-				p.pause();
+//				p.pause();
 				_animateur.playAnimation(getAnimRotation(dir, p));
 			}
 		}
@@ -164,7 +164,7 @@ public class Robot implements Drawable {
 				f += dep;
 				
 				if (f >= 1){
-					po.resume();
+//					po.resume();
 					return true;
 				}
 				else
@@ -192,7 +192,7 @@ public class Robot implements Drawable {
 				f += dep;
 				
 				if (f >= 1){
-					po.resume();
+//					po.resume();
 					return true;
 				}
 				else

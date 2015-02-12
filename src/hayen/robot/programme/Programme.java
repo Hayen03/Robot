@@ -1,10 +1,7 @@
 package hayen.robot.programme;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-//import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.util.Hashtable;
 
 import hayen.robot.Direction;
@@ -13,11 +10,10 @@ import hayen.robot.graphisme.Console;
 import hayen.robot.graphisme.Grille;
 import hayen.robot.programme.instruction.*;
 
-public class Programme implements Runnable{
+public class Programme {
 	
-	private Grille _grille;
+	private Application _app;
 	private Console _console;
-	private Thread _thread = null;
 	private boolean _paused = false;
 	
 	protected final Instruction[] _instructions;
@@ -32,18 +28,15 @@ public class Programme implements Runnable{
 		_ligne = 0;
 		_longueur = _instructions.length;
 		
-		_grille = null;
 		_console = null;
 	}
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
 		_instructions = getInstructionsFromFichier(adresse);
 		_longueur = _instructions.length;
-		_grille = null;
 		_console = null;
 	}
 	
 	public Programme setGrille(Grille g){ // TODO Il y aura surement des modifications à apporter ici
-		_grille = g;
 		Robot r = g.getRobot();
 		assigner("largeur", (int)g.getTailleGrille().getX());
 		assigner("hauteur", (int)g.getTailleGrille().getY());
@@ -59,9 +52,6 @@ public class Programme implements Runnable{
 		
 		return this;
 	}
-	public Grille getGrille(){
-		return _grille;
-	}
 	
 	public Programme setConsole(Console c){
 		_console = c;
@@ -71,63 +61,23 @@ public class Programme implements Runnable{
 		return _console;
 	}
 	
+	public Application getApp(){
+		return _app;
+	}
+	
 	// TODO Il y a beaucoup de chose à changer ici
-	private static Instruction[] getInstructionsFromFichier(String adresse) throws IOException, FichierIncorrectException, ClassNotFoundException, OperationInvalideException{
-		Instruction[] instructions;
-		if (adresse.endsWith(".pr")){
-			instructions = Compilateur2.compileFichier(adresse);
-		}
-		else if (!adresse.endsWith(".prc")) throw new FichierIncorrectException("Fichier invalide");
-		else{
-			ObjectInputStream fichier = new ObjectInputStream(new FileInputStream(adresse));
-			String version = fichier.readUTF();
-			if (version.equals(Compilateur2.version)) instructions = (Instruction[])fichier.readObject();
-			else{
-				fichier.close();
-				throw new FichierIncorrectException("Version trop ancienne du compilateur");
-			}
-			fichier.close();
-		}
-		System.out.println("fin compilation");
-		return instructions;
+	private static Instruction[] getInstructionsFromFichier(String adresse){
+		return null;
 	}
 	
-	// TODO Encore beaucoup de chose à changer
-	public boolean executer(){
-		int i = 0;
-		while (i < _instructions.length){
-			if (!_paused){
-//				System.out.print("l ");
-				_instructions[i].executer(this);
-				i++;
-			}
-		}
-//		System.out.println("\nEnded;");
-		return true;
+	public Instruction getProchaineInstruction(){
+		return _instructions[_ligne++];
 	}
-	
-	@Override
-	public void run() {
-		executer();
+	public int getLigne(){
+		return _ligne;
 	}
-	
-	// TODO ici aussi (toutes les méthode ci-dessous)
-	public void start(){ 
-//		System.out.print("Started: ");
-		_paused = false;
-		_thread = new Thread(this);
-		_thread.start();
-	}
-	public void pause(){ 
-		_paused = true;
-//		System.out.println("paused;");
-	}
-	public void resume(){
-		_paused = false;
-//		System.out.print("resumed: ");
-	}
-	public boolean isPaused(){
-		return _paused;
+	public void setLigne(int ln){
+		_ligne = ln;
 	}
 	
 	public void assigner(String id, int n){

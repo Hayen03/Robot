@@ -1,5 +1,6 @@
 package hayen.robot.programme.instruction;
 
+import hayen.robot.programme.Application;
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
@@ -20,19 +21,17 @@ public class Assigner extends Instruction {
 	}
 
 	@Override
-	public boolean executer(Object... params){
-		Programme p =(Programme)params[0];
+	public void executer(Application app){
+		Programme p = app.getProgramme();
 
 		if (_termes == null){ // s'il n'y a aucun terme, c'est une déclaration de variable
 			for (String id : _ids)
 				p.assigner(id, 0);
-			return true;
 		}
 		else { // autrement, on évalue l'expression, puis on assigne les variables
 			int v = Util.evaluer(_termes, p);
 			for (String id : _ids)
 				p.assigner(id, v);
-			return true;
 		}
 	}
 

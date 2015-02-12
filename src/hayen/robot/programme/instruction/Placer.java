@@ -1,6 +1,6 @@
 package hayen.robot.programme.instruction;
 
-import hayen.robot.programme.Programme;
+import hayen.robot.programme.Application;
 
 public class Placer extends Instruction {
 	
@@ -12,10 +12,8 @@ public class Placer extends Instruction {
 	
 	// TODO: réparer lorsque je vais le briser
 	@Override
-	public boolean executer(Object... params) {
-		Programme p = (Programme)params[0];
-		p.getGrille().setCaseActif(_placer);
-		return true;
+	public void executer(Application app) {
+		app.getGrille().setCaseActif(_placer);
 	}
 
 }
