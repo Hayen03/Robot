@@ -5,8 +5,6 @@ import hayen.robot.Robot;
 import hayen.robot.programme.Programme;
 
 public class Tourner extends Instruction {
-
-	private static final long serialVersionUID = -1439872705896478172L;
 	
 	private Object _direction;
 	

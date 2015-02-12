@@ -4,18 +4,12 @@ import hayen.robot.programme.instruction.Afficher;
 import hayen.robot.programme.instruction.Assigner;
 import hayen.robot.programme.instruction.Avancer;
 import hayen.robot.programme.instruction.Condition;
-import hayen.robot.programme.instruction.Declarer;
 import hayen.robot.programme.instruction.Instruction;
 import hayen.robot.programme.instruction.Placer;
 import hayen.robot.programme.instruction.Tourner;
 import hayen.robot.util.Util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -55,7 +49,9 @@ public class Compilateur2 {
 	private static final String exension = ".pr";
 
 	private static final String[] variablesPreEnregistre = {"hauteur", "largeur", "posx", "posy", "gauche", "droite", "orientation", "nord", "est", "ouest", "sud"};
-
+	
+	private static int _ln = 0;
+	
 	/** compile un programme à partir d'un fichier .pr
 	 * @param adresse : l'adresse du fichier à compiler
 	 * @return le programme compilé
@@ -63,30 +59,9 @@ public class Compilateur2 {
 	 * @throws FichierIncorrectException
 	 * @throws OperationInvalideException 
 	 */
-	public static Instruction[] compileFichier(String adresse) throws IOException, FichierIncorrectException, OperationInvalideException{
-		Vector<String> lignes = new Vector<String>();
-
-		if (! adresse.endsWith(exension)){
-			throw new FichierIncorrectException("extension invalide");
-		}
-
-		else{
-
-			File fichier = new File(adresse); // le fichier à lire
-			FileReader fr = new FileReader(fichier);
-			BufferedReader br = new BufferedReader(fr);
-
-			String ligne;
-			while((ligne = br.readLine()) != null){
-				lignes.add(ligne);
-			}
-
-			br.close();
-			fr.close();
-
-		}
-		ArrayList<String> tmp = new ArrayList<String>(lignes);
-		return compile(tmp);
+	public static Instruction[] compileFichier(String adresse) {
+		// TODO: à refaire parce que je continue de briser des trucs
+		return null;
 	}
 
 	/**
@@ -95,11 +70,8 @@ public class Compilateur2 {
 	 * @param instructions : le bloc d'instructions à enregistrer
 	 * @throws IOException
 	 */
-	public static void compileVersFichier(String adresse, Instruction[] instructions) throws IOException{
-		ObjectOutputStream fichier = new ObjectOutputStream(new FileOutputStream(adresse));
-		fichier.writeObject(version);
-		fichier.writeObject(instructions);
-		fichier.close();
+	public static void compileVersFichier(String adresse, Instruction[] instructions) {
+		// TODO: same thing
 	}
 
 	/**
@@ -111,7 +83,12 @@ public class Compilateur2 {
 	public static Instruction[] compile(ArrayList<String> programme) throws OperationInvalideException{
 		return compile(programme.toArray(new String[programme.size()]));
 	}
-
+	/**
+	 * compile une liste de String représentant des instructions afin de former un programme executable
+	 * @param programme : les instructions qui doivent être compilé
+	 * @return le programme compilé
+	 * @throws OperationInvalideException 
+	 */
 	public static Instruction[] compile(String programme) throws OperationInvalideException {
 		return compile(programme.split("\n"));
 	}
@@ -136,23 +113,23 @@ public class Compilateur2 {
 		Vector<Integer> typeBloc = new Vector<Integer>();
 		typeBloc.add(Main);
 
-		int ln = 0; // le numero de la ligne
+		_ln = 0; // le numero de la ligne
 		int x = 0; // le nombre de ligne sauté
 		do {
 
 			// séparer la ligne en mot
-			String[] inst = separe(texte[ln]);
+			String[] inst = separe(texte[_ln]);
 			if (inst == null)
-				throw new CaractereInvalideException("Erreur, caractère invalide à la ligne " + (ln+1));
+				throw new CaractereInvalideException("Erreur, caractère invalide à la ligne " + (_ln+1));
 
 			if (inst.length == 0){ // on ignore la ligne si aucune instruction n'est donnée
 				x++;
-				ln++;
+				_ln++;
 			}
 			else {
 				String premierMot = inst[0];
 				/* ---------------------------------------------------- AFFICHER ----------------------------------------------- */
-				if (premierMot.equals(motAfficher)){
+				if (premierMot.equals(motAfficher)){ // TODO: Modifier por qu'il soit possible d'afficher le résultat d'opération
 					String[] param = Util.subArray(inst, 1, inst.length).toArray(new String[inst.length - 1]);
 					for (int j = 1; j < inst.length; j++){
 						// une variable serait ce qui n'est pas composé seulement de chiffre, et on ne veut pas afficher de mot réservé
@@ -160,11 +137,11 @@ public class Compilateur2 {
 						String m = inst[j];
 						if (!Util.isDigit(m)){ // test pour s'assurer que le mot est correcte
 							if (isMotReserve(m)) 
-								throw new OperationInvalideException("ERREUR: Il est impossible d'afficher un mot reservé\n" + "ln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: Il est impossible d'afficher un mot reservé\n" + "ln." + (_ln+1));
 							else if (!(Util.isAlphaNumeric(m) || motCaractere.equals(m))) 
-								throw new OperationInvalideException("ERREUR: Caractère invalide\n" + "ln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: Caractère invalide\n" + "ln." + (_ln+1));
 							else if (!(var.contains(m) || motCaractere.equals(m))) 
-								throw new OperationInvalideException("ERREUR: variable non déclaré\n" + "ln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: variable non déclaré\n" + "ln." + (_ln+1));
 							// si toutes ces étapes sont passé, le terme est correcte
 						}
 						param[j-1] = inst[j];
@@ -184,20 +161,20 @@ public class Compilateur2 {
 						for (int j = 1; j < inst.length; j++){
 							// envoyer une erreur si le nom est invalide
 							if ( !(Character.isAlphabetic(inst[j].charAt(0)) && Util.isAlphaNumeric(inst[j])) ) 
-								throw new OperationInvalideException("ERREUR: nom de variable invalide\n" + "ln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: nom de variable invalide\n" + "ln." + (_ln+1));
 							// envoyer une erreur si l'identificateur existe déjà
 							else if (estDeclarer(var, inst[j])) 
-								throw new OperationInvalideException("ERREUR: la variable <" + inst[j] + "> a déjà été déclarée\n" + "ln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: la variable <" + inst[j] + "> a déjà été déclarée\n" + "ln." + (_ln+1));
 							else {
 								var.get(var.size()-1).add(inst[j]);
 								params.add(inst[j]);
 							}
 						}
-						Instruction toAdd = new Declarer(params.toArray(new String[params.size()]));
+						Instruction toAdd = new Assigner(params.toArray(new String[params.size()]), null);
 						instructions.add(toAdd);
 					}
 					else 
-						throw new OperationInvalideException("ERREUR: expression invalide (une déclaration doit être fait sous la forme: var <nom>)\n" + "ln." + (ln+1));
+						throw new OperationInvalideException("ERREUR: expression invalide (une déclaration doit être fait sous la forme: var <nom>)\n" + "ln." + (_ln+1));
 				}
 
 				/* ---------------------------------------------------- BOUCLE ----------------------------------------------- */
@@ -331,7 +308,7 @@ public class Compilateur2 {
 				else if (premierMot.equals(motDeplacer) || premierMot.equals(motPlacer) || premierMot.equals(motEnlever)){
 					// La seule conttrainte est qu'il ne doit y avoir rien qui suit l'operation
 					if (inst.length > 1)
-						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (ln+1));
+						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
 					else { // ici on fait le tri de quoi est quoi
 						if (premierMot.equals(motDeplacer))
 							instructions.add(new Avancer());
@@ -346,7 +323,7 @@ public class Compilateur2 {
 				else if (premierMot.equals(motTourner)){
 					// ce qui suit l'opération doit être un nombre ou une variable (un seul(pour le moment))
 					if (inst.length > 3 || inst.length < 2) // la limite est à 3 au cas où c'est un nombre négatif (EX: -1 --> le coupeur de mot va le séparer ainsi : -, 1, donc deux mots)
-						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (ln+1));
+						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
 					// ici, on décide de quel bord tourner
 					else {
 						String s;
@@ -363,13 +340,13 @@ public class Compilateur2 {
 
 						if (inst.length == 3){
 							if (!inst[1].equals("-"))
-								throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
 							else {
 								s = inst[2];
 								if (Util.isDigit(s))
 									toAdd = new Tourner(-Integer.parseInt(s));
 								else if (!var.contains(s))
-									throw new OperationInvalideException("ERREUR: Variable non declar�\nln." + (ln+1));
+									throw new OperationInvalideException("ERREUR: Variable non declar�\nln." + (_ln+1));
 								else 
 									toAdd = new Tourner("-" + s);
 							}
@@ -380,7 +357,7 @@ public class Compilateur2 {
 							if (Util.isDigit(s))
 								toAdd = new Tourner(Integer.parseInt(s));
 							else if (!var.contains(s))
-								throw new OperationInvalideException("ERREUR: Variable non declar�\nln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: Variable non declar�\nln." + (_ln+1));
 							else 
 								toAdd = new Tourner(s);
 						}
@@ -395,86 +372,54 @@ public class Compilateur2 {
 					// syntaxe: <identificateurs> : <expression>
 
 					Vector<String> ids = new Vector<String>(); // les identificateurs
-					Vector<Object> terme = new Vector<Object>(); // les termes de l'expression (String: variable, int: nombre, char: operateur)
+					Object[] terme; // les termes de l'expression (String: variable, int: nombre, char: operateur)
 					int j = 0;
 
 					// trouver les identificateurs
-					//				System.out.println("Cherche les identificateurs...");
 					for (; j < inst.length; j++){
 						if (inst[j].equals(motAssignation)){
 							// si le premier terme est le signe d'assignation, il y a un problème
 							if (j == 0) 
-								throw new OperationInvalideException("ERREUR: aucun identificateur trouvé pour l'assignation\nln." + (ln+1));
+								throw new OperationInvalideException("ERREUR: aucun identificateur trouvé pour l'assignation\nln." + (_ln+1));
 							j++;
 							break; // sinon, on a terminer de chercher les identificateurs
 						}
 
 						else if (!Util.isAlphaNumeric(inst[j])) 
-							throw new OperationInvalideException("ERREUR: identificateur invalide\nln." + (ln+1));
+							throw new OperationInvalideException("ERREUR: identificateur invalide\nln." + (_ln+1));
 
 						// l'identificateur n'existe pas
 						else if (!estDeclarer(var, inst[j])) 
-							throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (ln+1));
+							throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (_ln+1));
 
 						// les variables pre enregistrée ne peuvent être modifié par l'utilisateur
 						else if (Util.contains(variablesPreEnregistre, inst[j]))
-							throw new OperationInvalideException("ERREUR: la variable " + inst[j] + " ne peut pas être modifier\nln." + (ln+1));
+							throw new OperationInvalideException("ERREUR: la variable " + inst[j] + " ne peut pas être modifier\nln." + (_ln+1));
 
 						else 
 							ids.add(inst[j]);
 					}
 
-					// System.out.println("Cherche les termes");
-					for (; j < inst.length; j++){
-						// operateur
-						if (operateur.contains(inst[j])) 
-							terme.add(new Character(inst[j].charAt(0)));
-
-						// nombre
-						else if (Util.isDigit(inst[j])) 
-							terme.add(new Integer(inst[j]));
-
-						// variable existante
-						else if (estDeclarer(var, inst[j])) 
-							terme.add(inst[j]);
-
-						// variable non-existante
-						else 
-							throw new OperationInvalideException("ERREUR: l'identificateur indiqué n'a pas été déclaré\nln." + (ln+1));
-					}
+					// Trouver les termes
+					terme = Util.string2Operation(Util.Array2String(Util.subArray(inst, j, inst.length).toArray(new String[inst.length-j])));
 
 					// s'il n'y a plus de mots, il y a une erreur (EX: bla : )
-					if (terme.size() == 0) 
-						throw new OperationInvalideException("ERREUR: aucune expression pour l'assignation\nln." + (ln+1));
+					if (terme.length == 0) 
+						throw new OperationInvalideException("ERREUR: aucune expression pour l'assignation\nln." + (_ln+1));
 
-					// vérifier l'ordre des termes, si ils sont plus nombreux que 1, sinon, on ne fait que vérifier le dit terme
-					if (terme.size() == 1){
-						if (terme.get(0).getClass().equals(Character.class))
-							throw new OperationInvalideException("ERREUR: operation invalide\nln." + (ln+1));
+					// vérifier l'ordre des termes et l'existence des variables
+					else if (!verifierOperation(terme, var)){
+						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (_ln+1));
 					}
-					else {
-						// vérification des extrémité: 0 -> valeur; -1 -> operateur
-						if (terme.get(0).getClass().equals(Character.class) && !terme.get(terme.size() - 1).getClass().equals(Character.class))
-							throw new OperationInvalideException("ERREUR: operation invalide\nln." + (ln+1));
-						// VRAIMENT vérifier l'ordre des termes (v o v o v o...), commençant par le deuxième
-						boolean valeur = !terme.get(1).getClass().equals(Character.class);
-						for (int l = 1; l < terme.size(); l++){
-							boolean isOp = terme.get(l).getClass().equals(Character.class);
-							if (valeur == isOp)
-								throw new OperationInvalideException("ERREUR: expression invalide\nln." + (ln+1));
-							else
-								valeur = !valeur;
-						}
-					}
-
-					Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme.toArray());
+					
+					Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme);
 					instructions.add(toAdd);
 
 				}
 
-				ln++;
+				_ln++;
 			}
-		} while (ln > 0);
+		} while (_ln < texte.length);
 
 		return instructions.toArray(new Instruction[instructions.size()]);
 	}
@@ -613,5 +558,27 @@ public class Compilateur2 {
 		}
 		return true;
 	}
-	
+	private static boolean verifierOperation(Object[] terme, Vector<Vector<String>> var) throws OperationInvalideException{
+		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
+		// format nb op nb op nb ...
+				if (terme.length%2 == 0)
+					return false;
+				boolean op = true;
+				int i = 0;
+				while (i < terme.length){
+					if (op == terme[i].getClass().equals(Character.class))
+						return false;
+					
+					// vérification des variables
+					if (terme[i].getClass().equals(String.class)){
+						String v = (String)terme[i];
+						if (!estDeclarer(var, v))
+							throw new OperationInvalideException("ERREUR: la variable" + v + "n'a pas été déclaré\nln." + (_ln+1));; // ERREUR 2
+					}
+					
+					op = !op;
+					i++;
+				}
+				return true;
+	}
 }

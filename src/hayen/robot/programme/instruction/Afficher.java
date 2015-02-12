@@ -7,8 +7,6 @@ import hayen.robot.util.Util;
 
 public class Afficher extends Instruction {
 
-	private static final long serialVersionUID = -1447648248726900296L;
-
 	private String[] _expression;
 
 	public Afficher(String... expression){

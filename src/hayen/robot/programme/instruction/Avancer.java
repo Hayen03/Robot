@@ -5,8 +5,6 @@ import hayen.robot.programme.Programme;
 
 public class Avancer extends Instruction {
 
-	private static final long serialVersionUID = 6462835422815333407L;
-
 	public Avancer(){
 		super();
 	}

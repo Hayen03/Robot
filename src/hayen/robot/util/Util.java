@@ -36,11 +36,11 @@ public class Util {
 		return false;
 	}
 	
-	public static String Array2String(Object[] a){
-		String s = "[";
+	public static <T> String Array2String(T[] a){
+		String s = "";
 		for (Object o : a)
 			s += o + ", ";
-		return s + "]";
+		return s;
 	}
 	
 	public static Object[] string2Operation(String op){
@@ -378,5 +378,15 @@ public class Util {
 
 		return (Integer)a.get(0);
 	}
-	
+	public static boolean comparerExpression(int a, int b, char op){
+		switch (op){
+		case '<':
+			return (a < b);
+		case '>':
+			return (a > b);
+		case '=':
+			return (a == b);
+		}
+		return false;
+	}
 }

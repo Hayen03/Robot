@@ -1,14 +1,9 @@
 package hayen.robot.programme.instruction;
 
-import java.util.Hashtable;
-import java.util.Vector;
-
 import hayen.robot.programme.Programme;
 import hayen.robot.util.Util;
 
 public class Assigner extends Instruction {
-
-	private static final long serialVersionUID = -1252954201912565150L;
 
 	public static final char opAdd = '+';
 	public static final char opMin = '-';
@@ -28,11 +23,17 @@ public class Assigner extends Instruction {
 	public boolean executer(Object... params){
 		Programme p =(Programme)params[0];
 
-		int v = Util.evaluer(_termes, p);
-		for (String id : _ids)
-			p.assigner(id, v);
-
-		return true;
+		if (_termes == null){ // s'il n'y a aucun terme, c'est une déclaration de variable
+			for (String id : _ids)
+				p.assigner(id, 0);
+			return true;
+		}
+		else { // autrement, on évalue l'expression, puis on assigne les variables
+			int v = Util.evaluer(_termes, p);
+			for (String id : _ids)
+				p.assigner(id, v);
+			return true;
+		}
 	}
 
 	@Override

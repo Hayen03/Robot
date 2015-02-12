@@ -5,8 +5,6 @@ import hayen.robot.util.Util;
 
 public class Condition extends Instruction {
 	
-	private static final long serialVersionUID = -3241751628795007765L;
-	
 	public static final char PlusGrandQue = '>';
 	public static final char PlusPetitQue = '<';
 	public static final char Egal = '=';
@@ -27,19 +25,7 @@ public class Condition extends Instruction {
 		int a = Util.evaluer(_op1, p);
 		int b = Util.evaluer(_op2, p);
 		
-		return comparerExpression(a, b, _op);
-	}
-	
-	public static boolean comparerExpression(int a, int b, char op){
-			switch (op){
-			case PlusPetitQue:
-				return (a < b);
-			case PlusGrandQue:
-				return (a > b);
-			case Egal:
-				return (a == b);
-			}
-			return false;
+		return Util.comparerExpression(a, b, _op);
 	}
 	
 	@Override
