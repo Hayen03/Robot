@@ -16,16 +16,28 @@ import hayen.robot.programme.FichierIncorrectException;
 import hayen.robot.programme.OperationInvalideException;
 import hayen.robot.programme.Programme;
 import hayen.robot.programme.instruction.Assigner;
+import hayen.robot.util.Util;
 public class Main {
 
 	// FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException
 	public static void main(String[] args) throws InterruptedException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException {
 //		defaut2();
 		
-		Object[] op = {'(', 1, '+', "vachon", ')', '*', '(', 4, '-', '(',  5, '/', 3, ')', ')'};
+/*		Object[] op = {'(', 1, '+', "vachon", ')', '*', '-', '(', 4, '-', '(',  5, '/', 3, ')', ')'};
 		Hashtable<String, Integer> v = new Hashtable<String, Integer>();
 		v.put("vachon", 2);
-		Assigner.evaluer(op, v);
+		int n = Assigner.evaluer(op, v);
+		System.out.println(n);
+*/
+		
+		String s = "(1+vachon)*-(4-(5/3))";
+		Object[] o = Util.string2Operation(s);
+		for (Object obj : o)
+			System.out.print(obj + " ");
+		System.out.println(" = ");
+		Hashtable<String, Integer> v = new Hashtable<String, Integer>();
+		v.put("vachon", 2);
+		System.out.println(Util.evaluer(o, v));
 	}
 	
 	public static void defaut1() throws InterruptedException, HeadlessException, FileNotFoundException, ClassNotFoundException, IOException, FichierIncorrectException, OperationInvalideException{

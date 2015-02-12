@@ -24,8 +24,8 @@ public class Condition extends Instruction {
 	@Override
 	public boolean executer(Object... params){
 		Programme p = (Programme)params[0];
-		int a = Assigner.evaluer(_op1, p);
-		int b = Assigner.evaluer(_op2, p);
+		int a = Util.evaluer(_op1, p);
+		int b = Util.evaluer(_op2, p);
 		
 		return comparerExpression(a, b, _op);
 	}
