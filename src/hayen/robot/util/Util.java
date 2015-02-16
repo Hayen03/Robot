@@ -18,10 +18,17 @@ public class Util {
 		return true;
 	}
 	
+	/**
+	 * 
+	 * @param original : le tableau original
+	 * @param debut : le premier membre du sous-tableau (inclus)
+	 * @param fin : l'indice de fin du sous-tableau (exclus)
+	 * @return
+	 */
 	public static <T> ArrayList<T> subArray(T[] original, int debut, int fin){
 		ArrayList<T> retour = new ArrayList<T>();
-		for (int i = 0; i < fin - 1; i++){
-			retour.add(original[debut + i]);
+		for (int i = debut; i < fin; i++){
+			retour.add(original[i]);
 		}
 		return retour;
 	}

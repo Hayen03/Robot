@@ -30,7 +30,7 @@ public class Compilateur2 {
 	private static final String motBoucle = ajouterMotReserve("tantque");
 	private static final String motPlacer = ajouterMotReserve("placer");
 	private static final String motEnlever = ajouterMotReserve("enlever");
-	
+
 	public static final String motAssignation = ":";
 	public static final String motCommentaire = "#";
 	public static final String motCaractere = ".";
@@ -44,20 +44,20 @@ public class Compilateur2 {
 	public static final String comparaisonGrand = ">";
 	public static final String comparaisonPetit = "<";
 	public static final String comparaisonEgal = "=";
-	
+
 	public static final String parentheseIn = "(";
 	public static final String parentheseOut = ")";
 	public static final String crochetIn = "[";
 	public static final String crochetOut = "]";
 
 	private static final String[] operateurs = {motAssignation, motCommentaire, motCaractere, operateurAdd, operateurMin, operateurMul, operateurDiv, operateurMod, comparaisonGrand, comparaisonPetit, comparaisonEgal, parentheseIn, parentheseOut, crochetIn, crochetOut};
-	
-//	private static final String exension = ".pr";
+
+	//	private static final String exension = ".pr";
 
 	private static final String[] variablesPreEnregistre = {"hauteur", "largeur", "posx", "posy", "gauche", "droite", "orientation", "nord", "est", "ouest", "sud"};
-	
+
 	private static int _ln = 0;
-	
+
 	/** compile un programme à partir d'un fichier .pr
 	 * @param adresse : l'adresse du fichier à compiler
 	 * @return le programme compilé
@@ -268,18 +268,18 @@ public class Compilateur2 {
 					op2 = tmp.toArray();
 					if (op1.length == 0 || op2.length == 0 || op == 0)
 						return null; //ERREUR
-					
+
 					// 3
 					if (!(verifierOperation(op1) || verifierOperation(op2)))
 						return null; // ERREUR
-					
+
 					// 4
 					instructions.add(new Condition(op1, op, op2));
-					
+
 					// 5
 					var.add(new Vector<String>());
 					typeBloc.add(premierMot.equals(motCondition) ? Condition : _ln);
-					
+
 				}
 
 				/* ---------------------------------------------------- SINON ----------------------------------------------- */
@@ -291,19 +291,19 @@ public class Compilateur2 {
 					 * 4- changer le vecteur de variable
 					 * 5- changer le type de bloc
 					 */
-					
+
 					if (!typeBloc.get(typeBloc.size()-1).equals(Condition) || inst.length > 1)
 						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
 					else {
 						instructions.add(new Fin(Fin.codeSinon));
-						
+
 						var.remove(var.size()-1);
 						typeBloc.remove(typeBloc.size()-1);
-						
+
 						var.add(new Vector<String>());
 						typeBloc.add(Sinon);
 					}
-					
+
 				}
 
 				/* ---------------------------------------------------- FIN ----------------------------------------------- */
@@ -314,7 +314,7 @@ public class Compilateur2 {
 					 * 3- enlever une couche du vecteur de variable
 					 * 4- changer le type de bloc
 					 */
-					
+
 					if (typeBloc.get(typeBloc.size()-1).equals(Main))
 						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
 					else { 
@@ -325,7 +325,7 @@ public class Compilateur2 {
 						var.remove(var.size()-1);
 						typeBloc.remove(typeBloc.size()-1);
 					}
-					
+
 				}
 
 				/* ---------------------------------------------------- AVANCER/PLACER/ENLEVER ----------------------------------------------- */
@@ -436,7 +436,7 @@ public class Compilateur2 {
 					else if (!verifierOperation(terme, var)){
 						throw new OperationInvalideException("ERREUR: operation invalide\nln." + (_ln+1));
 					}
-					
+
 					Instruction toAdd = new Assigner(ids.toArray(new String[ids.size()]), terme);
 					instructions.add(toAdd);
 
@@ -463,15 +463,15 @@ public class Compilateur2 {
 		String c;
 		while (i < texte.length()){
 			c = "" + texte.charAt(i);
-			
+
 			// si c marque le début d'un commentaire, quitte la boucle
 			if (c.equals(motCommentaire))
 				break;
-			
+
 			// sinon, si c est alphanumérique, cherche le mot au complet
 			else if (Util.isAlphaNumeric(c)){
 				String mot = "";
-//				System.out.println("In boucle");
+				//				System.out.println("In boucle");
 				while (i < texte.length()){
 					c = "" + texte.charAt(i);
 					if (Util.isAlphaNumeric(c)){
@@ -492,7 +492,7 @@ public class Compilateur2 {
 					throw new CaractereInvalideException("Le caractère " + c + " est invalide.");
 				i++;
 			}
-			
+
 		}
 
 		return mots.toArray(new String[mots.size()]);
@@ -541,20 +541,56 @@ public class Compilateur2 {
 	 * @return true si l'expression est correct, sinon false
 	 */
 	public static boolean verifierOperation(Object[] terme){
-		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
-		// format nb op nb op nb ...  EXEPTION: + & -, qui peuvent être placer un peu partout, sauf en dernier
-		if (terme[terme.length-1].getClass().equals(Character.class))
+		// une opération est valide si elle ne finit pas par un opérateur arithmétique, que les opérateurs *, / et % ne sont pas doublé,
+		// que les valeurs (constante/variable) ne sont pas doublé et que toute les parenthèse sont fermé
+
+		System.out.println("à vérifier: " + Util.Array2String(terme));
+
+		if (terme[terme.length-1].getClass().equals(Character.class) && !terme[terme.length-1].toString().equals(parentheseOut)){
 			return false;
+		}
+
 		boolean op = true;
 		int i = 0;
 		while (i < terme.length){
 			if (op == terme[i].getClass().equals(Character.class)){
 				String c = terme[i].toString();
-				if (c.equals(operateurMul) || c.equals(operateurDiv) || c.equals(operateurMod))
+
+				if (!op){ // double valeur --> Erreur automatique
 					return false;
-				else if (!op)
+				}
+				else if (c.equals(parentheseIn)){ // dans le cas d'une parenthèse
+					// cas plus compliquer: il faut aller chercher la fin de la parenthèse et vérifier ce qu'il y a entre les deux
+					int j = 1;
+					int inc = 0;
+					Integer indice = null; // l'indice de la fin de parenthèse
+					while (j+i < terme.length && indice == null){
+						String s = terme[i+j].toString();
+						if (s.equals(parentheseIn)){
+							inc++;
+						}
+						else if (s.equals(parentheseOut)){
+							if (inc == 0){
+								indice = i+j;
+							}
+							else{
+								inc--;
+							}
+						}
+						j++;
+					}
+					if (indice == null) // il manque la fin de parenthèse
+						return false;
+					else {
+						if (!verifierOperation(Util.subArray(terme, i+1, indice).toArray())) // l'expression dans la parenthèse n'est pas valide
+							return false;
+						i = indice;
+						op = false;
+					}
+				}
+				else if (!(c.equals(operateurAdd) || c.equals(operateurMin))){ // double opérateur autre aue + et -
 					return false;
-				
+				}
 			}
 			else
 				op = !op;
@@ -570,26 +606,66 @@ public class Compilateur2 {
 	 * @throws OperationInvalideException si une variable n'était pas déclarer
 	 */
 	public static boolean verifierOperation(Object[] terme, Vector<Vector<String>> var) throws OperationInvalideException{
-		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
-		// format nb op nb op nb ...
-				if (terme.length%2 == 0)
+		// une opération est valide si elle ne finit pas par un opérateur arithmétique, que les opérateurs *, / et % ne sont pas doublé,
+		// que les valeurs (constante/variable) ne sont pas doublé et que toute les parenthèse sont fermé
+		if (terme[terme.length-1].getClass().equals(Character.class) && !terme[terme.length-1].toString().equals(parentheseOut)){
+			return false;
+		}
+
+		boolean op = true;
+		int i = 0;
+		while (i < terme.length){
+			if (op == terme[i].getClass().equals(Character.class)){
+				String c = terme[i].toString();
+
+				if (!op){
 					return false;
-				boolean op = true;
-				int i = 0;
-				while (i < terme.length){
-					if (op == terme[i].getClass().equals(Character.class))
-						return false;
-					
-					// vérification des variables
-					if (terme[i].getClass().equals(String.class)){
-						String v = (String)terme[i];
-						if (!estDeclarer(var, v))
-							throw new OperationInvalideException("ERREUR: la variable" + v + "n'a pas été déclaré\nln." + (_ln+1));; // ERREUR 2
-					}
-					
-					op = !op;
-					i++;
 				}
-				return true;
+				else if (c.equals(parentheseIn)){ // dans le cas d'une parenthèse
+					// cas plus compliquer: il faut aller chercher la fin de la parenthèse et vérifier ce qu'il y a entre les deux
+					int j = 1;
+					int inc = 0;
+					Integer indice = null; // l'indice de la fin de parenthèse
+					while (j+i < terme.length && indice == null){
+						String s = terme[i+j].toString();
+						if (s.equals(parentheseIn)){
+							inc++;
+						}
+						else if (s.equals(parentheseOut)){
+							if (inc == 0){
+								indice = i+j;
+							}
+							else{
+								inc--;
+							}
+						}
+						j++;
+					}
+					if (indice == null) // il manque la fin de parenthèse
+						return false;
+					else {
+						if (!verifierOperation(Util.subArray(terme, i+1, indice).toArray()))
+							return false;
+						i = indice;
+						op = false;
+					}
+				}
+				else if (!(c.equals(operateurAdd) || c.equals(operateurMin))){
+					return false;
+				}
+			}
+			else {
+				// vérification des variables
+				if (terme[i].getClass().equals(String.class)){
+					String v = (String)terme[i];
+					if (!estDeclarer(var, v))
+						throw new OperationInvalideException("ERREUR: la variable" + v + "n'a pas été déclaré\nln." + (_ln+1));; // ERREUR 2
+				}
+				op = !op;
+			}
+
+			i++;
+		}
+		return true;
 	}
 }
