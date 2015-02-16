@@ -125,22 +125,24 @@ public class Programme {
 	public void assigner(String id, int n){
 		int i = 0;
 		while (i < _variables.size()){
-			if (_variables.get(i).contains(id))
-				break;
+			if (_variables.get(i).contains(id)){
+				_variables.get(i).put(id, n);
+				return;
+			}
 			else
 				i++;
 		}
-		_variables.get(i).put(id, n);
+		_variables.get(i-1).put(id, n);
 	}
 	public int getVariable(String id){
 		int i = 0;
 		while (i < _variables.size()){
 			if (_variables.get(i).contains(id))
-				break;
+				return _variables.get(i).get(id);
 			else
 				i++;
 		}
-		return _variables.get(i).get(id);
+		return _variables.get(i-1).get(id);
 	}
 	
 	public Programme reset(){
@@ -149,6 +151,14 @@ public class Programme {
 		_variables = new Vector<Hashtable<String, Integer>>();
 		_variables.add(buffer);
 		return this;
+	}
+	
+	public void incremente(){
+		_variables.add(new Hashtable<String, Integer>());
+	}
+	public void decremente(){
+		if (_variables.size() > 1)
+			_variables.remove(_variables.size()-1);
 	}
 	
 }

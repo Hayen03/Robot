@@ -53,6 +53,27 @@ public class Util {
 		return s;
 	}
 	
+	public static Object[] string2Operation(String[] op){
+		Object[] termes = new Object[op.length];
+		
+		for (int i = 0; i < op.length; i++){
+			String mot = op[i];
+			if (Util.isDigit(mot))
+				termes[i] = Integer.parseInt(mot);
+			else if (Util.isAlphaNumeric(mot))
+				termes[i] = mot;
+			else if (mot.length() == 1){
+				char c = mot.charAt(0);
+				if (c == '+' || c == '-' || c == '/' || c == '*' || c == '%' || c == '(' || c == ')')
+					termes[i] = c;
+				else if (!(c == ' '))
+					return null; // ERREUR TODO: rajouter une erreur
+			}
+		}
+		
+		return termes;
+	}
+	
 	public static Object[] string2Operation(String op){
 		Vector<Object> terme = new Vector<Object>();
 

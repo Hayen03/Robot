@@ -56,4 +56,13 @@ public class Application extends JFrame{
 		return _programme;
 	}
 	
+	public void run(){
+		_programme.incremente();
+		Instruction i = _programme.getProchaineInstruction();
+		while (i != null){
+			i.executer(this);
+			i = _programme.getProchaineInstruction();
+		}
+	}
+	
 }

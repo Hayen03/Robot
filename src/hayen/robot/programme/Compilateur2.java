@@ -147,7 +147,7 @@ public class Compilateur2 {
 								throw new OperationInvalideException("ERREUR: Il est impossible d'afficher un mot reservé\n" + "ln." + (_ln+1));
 							else if (!(Util.isAlphaNumeric(m) || motCaractere.equals(m))) 
 								throw new OperationInvalideException("ERREUR: Caractère invalide\n" + "ln." + (_ln+1));
-							else if (!(var.contains(m) || motCaractere.equals(m))) 
+							else if (!(estDeclarer(var, m) || motCaractere.equals(m))) 
 								throw new OperationInvalideException("ERREUR: variable non déclaré\n" + "ln." + (_ln+1));
 							// si toutes ces étapes sont passé, le terme est correcte
 						}
@@ -401,7 +401,7 @@ public class Compilateur2 {
 					int j = 0;
 
 					// trouver les identificateurs
-					for (; j < inst.length; j++){
+					while (j < inst.length){
 						if (inst[j].equals(motAssignation)){
 							// si le premier terme est le signe d'assignation, il y a un problème
 							if (j == 0) 
@@ -423,13 +423,14 @@ public class Compilateur2 {
 
 						else 
 							ids.add(inst[j]);
+						j++;
 					}
 
 					// Trouver les termes
-					terme = Util.string2Operation(Util.Array2String(Util.subArray(inst, j, inst.length).toArray(new String[inst.length-j])));
+					terme = Util.string2Operation(Util.subArray(inst, j, inst.length).toArray(new String[inst.length-j]));
 
 					// s'il n'y a plus de mots, il y a une erreur (EX: bla : )
-					if (terme.length == 0) 
+					if (terme == null || terme.length == 0) 
 						throw new OperationInvalideException("ERREUR: aucune expression pour l'assignation\nln." + (_ln+1));
 
 					// vérifier l'ordre des termes et l'existence des variables
@@ -543,8 +544,6 @@ public class Compilateur2 {
 	public static boolean verifierOperation(Object[] terme){
 		// une opération est valide si elle ne finit pas par un opérateur arithmétique, que les opérateurs *, / et % ne sont pas doublé,
 		// que les valeurs (constante/variable) ne sont pas doublé et que toute les parenthèse sont fermé
-
-		System.out.println("à vérifier: " + Util.Array2String(terme));
 
 		if (terme[terme.length-1].getClass().equals(Character.class) && !terme[terme.length-1].toString().equals(parentheseOut)){
 			return false;
