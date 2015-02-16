@@ -3,6 +3,7 @@ package hayen.robot.programme;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import hayen.robot.Direction;
 import hayen.robot.Robot;
@@ -15,39 +16,54 @@ public class Programme {
 	private Application _app;
 	private Console _console;
 	
-	protected final Instruction[] _instructions;
-	protected Hashtable<String, Integer> _variables;
-	protected int _ligne;
-	protected final int _longueur;
+	private final Instruction[] _instructions;
+	private Vector<Hashtable<String, Integer>> _variables;
+	private int _ligne;
+	private final int _longueur;
+	private String _titre;
 	
-	public Programme(Instruction[] instructions){
+	public Programme(Instruction[] instructions, String titre){
 		
 		_instructions = instructions;
-		_variables = new Hashtable<String, Integer>();
+		_variables = new Vector<Hashtable<String, Integer>>();
+		_variables.add(new Hashtable<String, Integer>());
 		_ligne = 0;
 		_longueur = _instructions.length;
 		
 		_console = null;
+		_titre = titre;
+	}
+	public Programme(Instruction[] instructions){
+		
+		_instructions = instructions;
+		_variables = new Vector<Hashtable<String, Integer>>();
+		_variables.add(new Hashtable<String, Integer>());
+		_ligne = 0;
+		_longueur = _instructions.length;
+		
+		_console = null;
+		_titre = "";
 	}
 	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
 		_instructions = getInstructionsFromFichier(adresse);
 		_longueur = _instructions.length;
 		_console = null;
+		_titre = "";
 	}
 	
 	public Programme setGrille(Grille g){ // TODO Il y aura surement des modifications à apporter ici
 		Robot r = g.getRobot();
-		assigner("largeur", (int)g.getTailleGrille().getX());
-		assigner("hauteur", (int)g.getTailleGrille().getY());
-		assigner("posx", r.getX());
-		assigner("posy", r.getY());
-		assigner("orientation", r.getOrientation());
-		assigner("gauche", 1);
-		assigner("droite", -1);
-		assigner("nord", Direction.Nord);
-		assigner("ouest", Direction.Ouest);
-		assigner("sud", Direction.Sud);
-		assigner("est", Direction.Est);
+		_variables.get(0).put("largeur", (int)g.getTailleGrille().getX());
+		_variables.get(0).put("hauteur", (int)g.getTailleGrille().getY());
+		_variables.get(0).put("posx", r.getX());
+		_variables.get(0).put("posy", r.getY());
+		_variables.get(0).put("orientation", r.getOrientation());
+		_variables.get(0).put("gauche", 1);
+		_variables.get(0).put("droite", -1);
+		_variables.get(0).put("nord", Direction.Nord);
+		_variables.get(0).put("ouest", Direction.Ouest);
+		_variables.get(0).put("sud", Direction.Sud);
+		_variables.get(0).put("est", Direction.Est);
 		
 		return this;
 	}
@@ -62,6 +78,24 @@ public class Programme {
 	
 	public Application getApp(){
 		return _app;
+	}
+	
+	public Programme setApp(Application app){
+		_app = app;
+		app.setTitle(_titre);
+		return this;
+	}
+	
+	public int longueur(){
+		return _longueur;
+	}
+	public String getTitre(){
+		return _titre;
+	}
+	public Programme setTitre(String titre){
+		_titre = titre;
+		_app.setTitle(titre);
+		return this;
 	}
 	
 	// TODO Il y a beaucoup de chose à changer ici
@@ -89,10 +123,32 @@ public class Programme {
 	}
 	
 	public void assigner(String id, int n){
-		_variables.put(id, n);
+		int i = 0;
+		while (i < _variables.size()){
+			if (_variables.get(i).contains(id))
+				break;
+			else
+				i++;
+		}
+		_variables.get(i).put(id, n);
 	}
 	public int getVariable(String id){
-		return _variables.get(id);
+		int i = 0;
+		while (i < _variables.size()){
+			if (_variables.get(i).contains(id))
+				break;
+			else
+				i++;
+		}
+		return _variables.get(i).get(id);
+	}
+	
+	public Programme reset(){
+		_ligne = 0;
+		Hashtable<String, Integer> buffer = _variables.get(0);
+		_variables = new Vector<Hashtable<String, Integer>>();
+		_variables.add(buffer);
+		return this;
 	}
 	
 }
