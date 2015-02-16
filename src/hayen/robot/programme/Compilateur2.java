@@ -108,6 +108,8 @@ public class Compilateur2 {
 
 		Vector<Vector<String>> var = new Vector<Vector<String>>();
 		var.add(new Vector<String>());
+		for (int i = 0; i < variablesPreEnregistre.length; i++) // ajouter les variables déjà existentes
+			var.get(0).add(variablesPreEnregistre[i]);
 
 		final int Main = -1, Condition = -2, Sinon = -3; // >= 0 pour une boucle (numéro de la ligne)
 		Vector<Integer> typeBloc = new Vector<Integer>();
