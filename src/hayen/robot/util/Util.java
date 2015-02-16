@@ -39,7 +39,10 @@ public class Util {
 	public static <T> String Array2String(T[] a){
 		String s = "";
 		for (Object o : a)
-			s += o + ", ";
+			if (o != null)
+				s += o + ", ";
+			else
+				s += "null, ";
 		return s;
 	}
 	
@@ -60,11 +63,18 @@ public class Util {
 				}
 				if (c == '+' || c == '-' || c == '/' || c == '*' || c == '%' || c == '(' || c == ')')
 					terme.add(c);
-				else
+				else if (!(c == ' '))
 					return null; // ERREUR TODO: rajouter une erreur
 			}
 		}
-
+		if (!mot.equals("")){
+			if (Util.isDigit(mot))
+				terme.add(Integer.parseInt(mot));
+			else
+				terme.add(mot);
+			mot = "";
+		} 
+		
 		return terme.toArray();
 	}
 	

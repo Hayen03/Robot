@@ -30,12 +30,10 @@ public class Compilateur2 {
 	private static final String motBoucle = ajouterMotReserve("tantque");
 	private static final String motPlacer = ajouterMotReserve("placer");
 	private static final String motEnlever = ajouterMotReserve("enlever");
+	
 	public static final String motAssignation = ":";
-	private static final String motCommentaire = "#";
+	public static final String motCommentaire = "#";
 	public static final String motCaractere = ".";
-
-	private static final String operateur = "+-/*%";
-	private static final String comparaison = "><=";
 
 	public static final String operateurAdd = "+";
 	public static final String operateurMin = "-";
@@ -46,8 +44,15 @@ public class Compilateur2 {
 	public static final String comparaisonGrand = ">";
 	public static final String comparaisonPetit = "<";
 	public static final String comparaisonEgal = "=";
+	
+	public static final String parentheseIn = "(";
+	public static final String parentheseOut = ")";
+	public static final String crochetIn = "[";
+	public static final String crochetOut = "]";
 
-	private static final String exension = ".pr";
+	private static final String[] operateurs = {motAssignation, motCommentaire, motCaractere, operateurAdd, operateurMin, operateurMul, operateurDiv, operateurMod, comparaisonGrand, comparaisonPetit, comparaisonEgal, parentheseIn, parentheseOut, crochetIn, crochetOut};
+	
+//	private static final String exension = ".pr";
 
 	private static final String[] variablesPreEnregistre = {"hauteur", "largeur", "posx", "posy", "gauche", "droite", "orientation", "nord", "est", "ouest", "sud"};
 	
@@ -453,78 +458,42 @@ public class Compilateur2 {
 	 */
 	public static String[] separe(String texte) throws CaractereInvalideException{
 		Vector<String> mots = new Vector<String>();
-		TypeMot type = TypeMot.Inconnu;
-		String mot = "";
 
-		for (int i = 0; i < texte.length(); i++){
-			char l = texte.charAt(i);
-			// si la lettre est le commencement d'un commentaire, on arrête la boucle
-			if (motCommentaire.equals(l)) break;
-
-			// cas ou le type du mot est un identificateur
-			if (type == TypeMot.Identificateur){
-				// marche uniquement si c'est un alphanumérique
-				if (Character.isLetter(l) || Character.isDigit(l)){
-					mot += l;
-				}
-				// sinon, on considère que c'est un nouveau mot
-				else{
-					type = TypeMot.Inconnu;
-					mots.add(mot);
-					mot = "";
-				}
-			}
-
-			// cas ou c'est un nombre
-			if (type == TypeMot.Nombre){
-				// marche uniquement si c'est un caractère numérique
-				if (Character.isDigit(l)){
-					mot += l;
-				}
-				// sinon, on considère que c'est un nouveau mot
-				else{
-					type = TypeMot.Inconnu;
-					mots.add(mot);
-					mot = "";
-				}
-			}
-
-			// nouveau mot
-			if (type == TypeMot.Inconnu){
-				if (Character.isLetter(l)){
-					type = TypeMot.Identificateur; // si le mot commence par une lettre, c'est un identificateur
-					mot += l;
-				}
-				else if (Character.isDigit(l)){
-					type = TypeMot.Nombre; // si c'est par un chiffre, c'est un nombre
-					mot += l;
-				}
-				// si c'est un commentaire, on quitte la boucle, ce qui va finaliser la liste de mot
-				else if (motCommentaire.equals("" + l)) break;
-
-				else{ // autre cas spéciaux
-
-					// si c'est un operateur, ou un mot de comparaison, ou le mot d'assignation, on pousse le mot
-					if (operateur.contains("" + l) || comparaison.contains("" + l) || motAssignation.equals("" + l) || motCaractere.equals("" + l)){
-						mots.add("" + l);
+		int i = 0;
+		String c;
+		while (i < texte.length()){
+			c = "" + texte.charAt(i);
+			
+			// si c marque le début d'un commentaire, quitte la boucle
+			if (c.equals(motCommentaire))
+				break;
+			
+			// sinon, si c est alphanumérique, cherche le mot au complet
+			else if (Util.isAlphaNumeric(c)){
+				String mot = "";
+//				System.out.println("In boucle");
+				while (i < texte.length()){
+					c = "" + texte.charAt(i);
+					if (Util.isAlphaNumeric(c)){
+						mot += c;
+						i++;
 					}
-
-					// si c'est un espace ou une tabulation, on avance sans rien faire
-					else if (l == ' ' || l == '\t'){
+					else {
+						break;
 					}
-
-					// si c'est autre chose, c'est une erreur, et on l'affiche
-					else{
-						return null;
-					}
-
 				}
+				mots.add(mot);
 			}
-
+			else {
+				// si c'est un espace ou un opérateur existant
+				if (Util.contains(operateurs, c))
+					mots.add(c);
+				else if (!(c.equals(" ") || c.equals("\t")))
+					throw new CaractereInvalideException("Le caractère " + c + " est invalide.");
+				i++;
+			}
+			
 		}
-
-		// pousse le mot s'il n'était pas vide
-		if (!mot.equals(""))mots.add(mot);
 
 		return mots.toArray(new String[mots.size()]);
 	}
@@ -571,17 +540,24 @@ public class Compilateur2 {
 	 * @param terme : l'expression à vérifier
 	 * @return true si l'expression est correct, sinon false
 	 */
-	private static boolean verifierOperation(Object[] terme){
+	public static boolean verifierOperation(Object[] terme){
 		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
-		// format nb op nb op nb ...
-		if (terme.length%2 == 0)
+		// format nb op nb op nb ...  EXEPTION: + & -, qui peuvent être placer un peu partout, sauf en dernier
+		if (terme[terme.length-1].getClass().equals(Character.class))
 			return false;
 		boolean op = true;
 		int i = 0;
 		while (i < terme.length){
-			if (op == terme[i].getClass().equals(Character.class))
-				return false;
-			op = !op;
+			if (op == terme[i].getClass().equals(Character.class)){
+				String c = terme[i].toString();
+				if (c.equals(operateurMul) || c.equals(operateurDiv) || c.equals(operateurMod))
+					return false;
+				else if (!op)
+					return false;
+				
+			}
+			else
+				op = !op;
 			i++;
 		}
 		return true;
@@ -593,7 +569,7 @@ public class Compilateur2 {
 	 * @return true si l'expression est correct, sinon false
 	 * @throws OperationInvalideException si une variable n'était pas déclarer
 	 */
-	private static boolean verifierOperation(Object[] terme, Vector<Vector<String>> var) throws OperationInvalideException{
+	public static boolean verifierOperation(Object[] terme, Vector<Vector<String>> var) throws OperationInvalideException{
 		// une opération est valide si elle est composé d'un nombre impaire de terme et si elle est fait du 
 		// format nb op nb op nb ...
 				if (terme.length%2 == 0)
