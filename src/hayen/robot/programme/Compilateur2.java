@@ -198,80 +198,42 @@ public class Compilateur2 {
 
 					// 1
 					if (inst.length == 1)
-						return null; // ERREUR 
+						throw new OperationInvalideException("ln." + (_ln+1)); // ERREUR 
 
 					// 2
 					Object[] op1 = null, op2 = null;
-					char op = 0;
-					int i = 1;
-					Vector<Object> tmp = new Vector<Object>();
-					while (i < inst.length){ // op1 & op
-						String m = inst[i];
-						if (m.equals(comparaisonEgal)){
-							op = hayen.robot.programme.instruction.Condition.Egal;
-							break;
+					Character op = null;
+					{
+						Vector<Object> tmp1 = new Vector<Object>(), tmp2 = new Vector<Object>();
+						for (int i = 1; i < inst.length; i++){ // op1 & op
+							String s = inst[i];
+							if ("+-*/%<>&|!".contains(s)){
+								op = s.charAt(0);
+							}
+							else if (Util.isDigit(s)){
+								if (op == null)
+									tmp1.add(Integer.parseInt(s));
+								else
+									tmp2.add(Integer.parseInt(s));
+							}
+							else if (!isMotReserve(s)){
+								if (op == null)
+									tmp1.add(s);
+								else
+									tmp2.add(s);
+							}
+							else 
+								throw new OperationInvalideException("Erreur 3 ln." + (_ln+1));
 						}
-						else if (m.equals(comparaisonGrand)){
-							op = hayen.robot.programme.instruction.Condition.PlusGrandQue;
-							break;
-						}
-						else if (m.equals(comparaisonPetit)){
-							op = hayen.robot.programme.instruction.Condition.PlusPetitQue;
-							break;
-						}
-						else { // terme de l'opération 1
-							if (m.equals(operateurAdd))
-								tmp.add(Assigner.opAdd);
-							else if (m.equals(operateurDiv))
-								tmp.add(Assigner.opDiv);
-							else if (m.equals(operateurMin))
-								tmp.add(Assigner.opMin);
-							else if (m.equals(operateurMod))
-								tmp.add(Assigner.opMod);
-							else if (m.equals(operateurMul))
-								tmp.add(Assigner.opMul);
-							else if (Util.isDigit(m))
-								tmp.add(Integer.parseInt(m));
-							else if (estDeclarer(var, m))
-								tmp.add(m);
-							else
-								return null; // ERREUR
-						}
-						i++;
+						op1 = tmp1.toArray();
+						op2 = tmp2.toArray();
 					}
-					op1 = tmp.toArray();
-					tmp.clear();
-					while (i < inst.length){ // op2
-						String m = inst[i];
-						if (m.equals(comparaisonEgal) || m.equals(comparaisonPetit) || m.equals(comparaisonGrand))
-							return null; // ERREUR
-						else { // terme de l'opération 1
-							if (m.equals(operateurAdd))
-								tmp.add(Assigner.opAdd);
-							else if (m.equals(operateurDiv))
-								tmp.add(Assigner.opDiv);
-							else if (m.equals(operateurMin))
-								tmp.add(Assigner.opMin);
-							else if (m.equals(operateurMod))
-								tmp.add(Assigner.opMod);
-							else if (m.equals(operateurMul))
-								tmp.add(Assigner.opMul);
-							else if (Util.isDigit(m))
-								tmp.add(Integer.parseInt(m));
-							else if (estDeclarer(var, m))
-								tmp.add(m);
-							else
-								return null; // ERREUR
-						}
-						i++;
-					}
-					op2 = tmp.toArray();
 					if (op1.length == 0 || op2.length == 0 || op == 0)
-						return null; //ERREUR
+						throw new OperationInvalideException("Erreur 5 ln." + (_ln+1));
 
 					// 3
 					if (!(verifierOperation(op1) || verifierOperation(op2)))
-						return null; // ERREUR
+						throw new OperationInvalideException("Erreur 6 ln." + (_ln+1));
 
 					// 4
 					instructions.add(new Condition(op1, op, op2));
@@ -347,8 +309,8 @@ public class Compilateur2 {
 				/* ---------------------------------------------------- TOURNER ----------------------------------------------- */
 				else if (premierMot.equals(motTourner)){
 					// ce qui suit l'opération doit être un nombre ou une variable (un seul(pour le moment))
-					if (inst.length > 3 || inst.length < 2) // la limite est à 3 au cas où c'est un nombre négatif (EX: -1 --> le coupeur de mot va le séparer ainsi : -, 1, donc deux mots)
-						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1));
+					if (inst.length != 3 && inst.length != 2) // la limite est à 3 au cas où c'est un nombre négatif (EX: -1 --> le coupeur de mot va le séparer ainsi : -, 1, donc deux mots)
+						throw new OperationInvalideException("ERREUR: Operation invalide\nln." + (_ln+1) + " (" + Util.Array2String(inst) + ")");
 					// ici, on décide de quel bord tourner
 					else {
 						String s;
@@ -381,7 +343,7 @@ public class Compilateur2 {
 							s = inst[1];
 							if (Util.isDigit(s))
 								toAdd = new Tourner(Integer.parseInt(s));
-							else if (!var.contains(s))
+							else if (!estDeclarer(var, s))
 								throw new OperationInvalideException("ERREUR: Variable non declar�\nln." + (_ln+1));
 							else 
 								toAdd = new Tourner(s);

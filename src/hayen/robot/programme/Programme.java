@@ -51,23 +51,6 @@ public class Programme {
 		_titre = "";
 	}
 	
-	public Programme setGrille(Grille g){ // TODO Il y aura surement des modifications à apporter ici
-		Robot r = g.getRobot();
-		_variables.get(0).put("largeur", (int)g.getTailleGrille().getX());
-		_variables.get(0).put("hauteur", (int)g.getTailleGrille().getY());
-		_variables.get(0).put("posx", r.getX());
-		_variables.get(0).put("posy", r.getY());
-		_variables.get(0).put("orientation", r.getOrientation());
-		_variables.get(0).put("gauche", 1);
-		_variables.get(0).put("droite", -1);
-		_variables.get(0).put("nord", Direction.Nord);
-		_variables.get(0).put("ouest", Direction.Ouest);
-		_variables.get(0).put("sud", Direction.Sud);
-		_variables.get(0).put("est", Direction.Est);
-		
-		return this;
-	}
-	
 	public Programme setConsole(Console c){
 		_console = c;
 		return this;
@@ -82,7 +65,7 @@ public class Programme {
 	
 	public Programme setApp(Application app){
 		_app = app;
-		app.setTitle(_titre);
+		app.getFenetrePrincipale().setTitle(_titre);
 		return this;
 	}
 	
@@ -94,7 +77,7 @@ public class Programme {
 	}
 	public Programme setTitre(String titre){
 		_titre = titre;
-		_app.setTitle(titre);
+		_app.getFenetrePrincipale().setTitle(titre);
 		return this;
 	}
 	
@@ -103,46 +86,47 @@ public class Programme {
 		return null;
 	}
 	
-	public Instruction getProchaineInstruction(){
+	public synchronized Instruction getProchaineInstruction(){
 		if (_ligne >= _instructions.length)
 			return null;
 		else
 			return _instructions[_ligne++];
 	}
-	public Instruction getInstructionA(int ln){
+	public synchronized Instruction getInstructionA(int ln){
 		if (ln >= _instructions.length)
 			return null;
 		else
 			return _instructions[ln];
 	}
-	public int getLigne(){
+	public synchronized int getLigne(){
 		return _ligne;
 	}
-	public void setLigne(int ln){
+	public synchronized void setLigne(int ln){
 		_ligne = ln;
 	}
 	
-	public void assigner(String id, int n){
+	public synchronized void assigner(String id, int n){
 		int i = 0;
-		while (i < _variables.size()){
-			if (_variables.get(i).contains(id)){
+		while (i < _variables.size()-1){
+			if (_variables.get(i).containsKey(id)){
 				_variables.get(i).put(id, n);
 				return;
 			}
 			else
 				i++;
 		}
-		_variables.get(i-1).put(id, n);
+		_variables.get(i).put(id, n);
 	}
-	public int getVariable(String id){
+	public synchronized int getVariable(String id){
 		int i = 0;
 		while (i < _variables.size()){
-			if (_variables.get(i).contains(id))
+			if (_variables.get(i).containsKey(id)){
 				return _variables.get(i).get(id);
+			}
 			else
 				i++;
 		}
-		return _variables.get(i-1).get(id);
+		return 0;
 	}
 	
 	public Programme reset(){
@@ -153,10 +137,10 @@ public class Programme {
 		return this;
 	}
 	
-	public void incremente(){
+	public synchronized void incremente(){
 		_variables.add(new Hashtable<String, Integer>());
 	}
-	public void decremente(){
+	public synchronized void decremente(){
 		if (_variables.size() > 1)
 			_variables.remove(_variables.size()-1);
 	}

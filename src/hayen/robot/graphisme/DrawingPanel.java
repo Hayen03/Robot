@@ -1,22 +1,19 @@
 package hayen.robot.graphisme;
 
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
+public class DrawingPanel extends Component{
 
-public class Panel extends JPanel implements ActionListener{
-
-	private Drawable[] _obj;
-	private Timer _timer;
+	private static final long serialVersionUID = 1331855797238651386L;
 	
-	public Panel(){
+	private Drawable[] _obj;
+	
+	public DrawingPanel(){
 		_obj = new Drawable[0];
 	}
-	public Panel(Drawable... objects){
+	public DrawingPanel(Drawable... objects){
 		_obj = objects;
 	}
 	
@@ -26,7 +23,6 @@ public class Panel extends JPanel implements ActionListener{
 			newArray[i] = _obj[i];
 		newArray[_obj.length] = obj;
 		_obj = newArray;
-		obj.setPanel(this);
 	}
 	
 	public Drawable removeObject(int i){
@@ -57,27 +53,10 @@ public class Panel extends JPanel implements ActionListener{
 	}
 	
 	@Override
-	public void paintComponent(Graphics g){
+	public void paint(Graphics g){
 		Graphics2D g2 = (Graphics2D)g;
 		for (int i = 0; i < _obj.length; i++)
 			_obj[i].draw(g2);
-	}
-	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		repaint();
-	}
-	
-	public void startRefresh(int refreshRate){
-		if (_timer == null)
-			_timer = new Timer(refreshRate, this);
-		else
-			_timer.setDelay(refreshRate);
-		_timer.start();
-	}
-	public void stopRefresh(){
-		if (_timer != null)
-			_timer.stop();
 	}
 	
 }

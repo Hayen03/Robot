@@ -1,5 +1,7 @@
 package hayen.robot.graphisme;
 
+import hayen.robot.Robot;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -8,22 +10,18 @@ import javax.swing.Timer;
 public class Animateur implements ActionListener {
 
 	private Animation _anim;
-	private Transform _obj;
+	private Robot _obj;
 	private Timer _timer;
 	
-	public Animateur(Transform obj, Animation anim, int refresh){
-		_anim = anim;
+	public Animateur(Robot obj, int refresh){
 		_timer = new Timer(refresh, this);
 		_obj = obj;
-//		this.setDaemon(true);
 		_timer.start();
 	}
-	public Animateur(Transform obj, Animation anim, int refresh, int delay){
-		_anim = anim;
+	public Animateur(Robot obj, int refresh, int delay){
 		_timer = new Timer(refresh, this);
 		_obj = obj;
 		_timer.setInitialDelay(delay);
-//		this.setDaemon(true);
 	}
 	
 	public Animateur setAnimation(Animation anim){
@@ -56,7 +54,9 @@ public class Animateur implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (_anim.run(_obj, _timer.getDelay())){
 			_timer.stop();
+			_obj.getApp().setEnPause(false);
 		}
+		_obj.getApp().getPanel().repaint();
 	}
 	
 }

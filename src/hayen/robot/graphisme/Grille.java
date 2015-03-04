@@ -1,14 +1,11 @@
 package hayen.robot.graphisme;
 
-import hayen.robot.Robot;
+import hayen.robot.programme.Application;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
-
-import javax.swing.JPanel;
+import java.awt.Point;
 
 public class Grille implements Drawable {
 	
@@ -24,10 +21,7 @@ public class Grille implements Drawable {
 	private int _x;
 	private int _y;
 	private Color _couleur;
-	private Robot _robot;
-	private Panel _panel;
-	
-	private Vector2 _milieu;
+	private Application _app;
 	
 	public Grille(){
 		this(TailleParDefaut, TailleParDefaut);
@@ -41,9 +35,7 @@ public class Grille implements Drawable {
 		_x = x;
 		_y = y;
 		_couleur = CouleurActifDefaut;
-		_robot = new Robot(this);
-		_milieu = new Vector2(_x/2, _y/2);
-		_panel = null;
+		_app = null;
 	}
 	
 	/**
@@ -52,33 +44,25 @@ public class Grille implements Drawable {
 	 * @param y : la position en y de la case
 	 * @param v : la valeur � assigner � la case
 	 */
-	public void setCaseActif(int x, int y, boolean v){
-		_grille[x][y] = v;
+	public synchronized void setCaseActif(Point pos, boolean v){
+		_grille[pos.x][pos.y] = v;
 	}
-	
-	/**
-	 * Active ou d�sactive la case o� se trouve le robot
-	 * @param v : boolean - Active/D�sactive
-	 */
-	public void setCaseActif(boolean v){
-		_grille[_robot.getX()][_robot.getY()] = v;
+	public synchronized Grille setApp(Application app){
+		_app = app;
+		return this;
 	}
 	
 	/**
 	 * @return la taille de la grille sous la forme {x, y}
 	 */
-	public Vector2 getTailleGrille(){
+	public synchronized Vector2 getTailleGrille(){
 		return new Vector2(_x, _y);
 	}
-	
-	/**
-	 * @return Le robot associ� � la grille, null si il n'y en a pas
-	 */
-	public Robot getRobot(){
-		return _robot;
+	public synchronized Application getApp(){
+		return _app;
 	}
 	
-	public Dimension getPreferredSize() {
+	public synchronized Dimension getPreferredSize() {
 	      return new Dimension(_x * (TailleCarre + EspaceEntreCase) + EspaceEntreCase, _y * (TailleCarre + EspaceEntreCase) + EspaceEntreCase);
 	}
 	
@@ -89,7 +73,7 @@ public class Grille implements Drawable {
 	public void draw(Graphics2D g2){
 		for (int x = 0; x < _x; x++)
 			for (int y = 0; y < _y; y++){
-				if (_grille[x][y]) 
+				if (_grille[x][y])
 					g2.setColor(_couleur);
 				else
 					g2.setColor(CouleurNonActif);
@@ -104,17 +88,9 @@ public class Grille implements Drawable {
 	 * @param b : [0, 255] al quantit� de bleu dans la couleur
 	 * @return retourne la grille
 	 */
-	public Grille changerCouleur(int r, int g, int b){
+	public synchronized Grille changerCouleur(int r, int g, int b){
 		_couleur = new Color(r, g, b);
 		return this;
-	}
-	@Override
-	public void setPanel(Panel p) {
-		_panel = p;
-	}
-	@Override
-	public Panel getPanel() {
-		return _panel;
 	}
 	
 }
