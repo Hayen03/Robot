@@ -86,8 +86,8 @@ public class Robot implements Drawable {
 				_app.getPanel().repaint();
 			else {
 				_app.setEnPause(true);
-				Animation anim = getAnimDeplacement(direction);
-				_animateur.playAnimation(anim);
+				_translationAnim = new Vector2(direction.x, direction.y);
+				_animateur.playAnimation(getAnimDeplacement(direction));
 			}
 			_app.getProgramme().assigner("posx", newPos.x);
 			_app.getProgramme().assigner("posy", newPos.y);
@@ -118,6 +118,7 @@ public class Robot implements Drawable {
 				_app.getPanel().repaint();
 			else {
 				_app.setEnPause(true);
+				_rotationAnim = dir;
 				_animateur.playAnimation(getAnimRotation(dir));
 			}
 		}
@@ -191,6 +192,14 @@ public class Robot implements Drawable {
 			
 		};
 		return anim;
+	}
+
+	public synchronized void reset(){
+		_animateur.stop();
+		_translationAnim = Vector2.zero;
+		_rotationAnim = 0;
+		_orientation = Direction.Est;
+		_position = new Point(0, 0);
 	}
 	
 }

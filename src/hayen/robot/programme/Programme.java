@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import hayen.robot.Direction;
-import hayen.robot.Robot;
 import hayen.robot.graphisme.Console;
-import hayen.robot.graphisme.Grille;
-import hayen.robot.programme.instruction.*;
+import hayen.robot.programme.instruction.Instruction;
 
 public class Programme {
 	
@@ -86,12 +83,6 @@ public class Programme {
 		return null;
 	}
 	
-	public synchronized Instruction getProchaineInstruction(){
-		if (_ligne >= _instructions.length)
-			return null;
-		else
-			return _instructions[_ligne++];
-	}
 	public synchronized Instruction getInstructionA(int ln){
 		if (ln >= _instructions.length)
 			return null;
@@ -103,6 +94,10 @@ public class Programme {
 	}
 	public synchronized void setLigne(int ln){
 		_ligne = ln;
+	}
+	public synchronized void prochaineLigne(){
+		if (_ligne < _instructions.length)
+			_ligne++;
 	}
 	
 	public synchronized void assigner(String id, int n){
@@ -143,6 +138,10 @@ public class Programme {
 	public synchronized void decremente(){
 		if (_variables.size() > 1)
 			_variables.remove(_variables.size()-1);
+	}
+	
+	public synchronized void reserver(String id, int v){
+		_variables.get(0).put(id, v);
 	}
 	
 }

@@ -1,0 +1,19 @@
+var vache
+vache : (1+5)*9
+afficher vache .97
+si vache < 1
+	afficher .10 .97 .98 .99 .100 .10
+fin
+avancer
+tourner droite
+tourner gauche
+var i l
+i : 5
+afficher .10
+tantque i > 0
+	l : 100 + i
+	afficher .l .32
+	i : i - 1
+fin
+afficher .10 .97 .97 .97 .97 .97 .97 .97
+avancer

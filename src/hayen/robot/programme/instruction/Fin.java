@@ -1,6 +1,7 @@
 package hayen.robot.programme.instruction;
 
 import hayen.robot.programme.Application;
+import hayen.robot.programme.Programme;
 
 public class Fin extends Instruction {
 
@@ -15,30 +16,34 @@ public class Fin extends Instruction {
 	
 	@Override
 	public void executer(Application app) {
+		Programme p = app.getProgramme();
 		if (_code == codeSinon){ // avance le programme jusqu'à l'instruction suivant le "Fin" correspondant + dit au programme qu'il est sorti d'un bloc
 			Instruction i = null;
+			int ln = p.getLigne();
 			int n = 0;
-			while (i == null){
-				i = app.getProgramme().getProchaineInstruction();
-				if (i.getClass().equals(Fin.class)){
-					if (n != 0){
-						n--;
-						i = null;
-					}
-				}
-				else if (i.getClass().equals(Condition.class)){
+			int deltaLn = 1;
+			while (ln+deltaLn < p.longueur()){
+				i = p.getInstructionA(ln + deltaLn);
+				if (i instanceof Condition){
 					n++;
-					i = null;
 				}
+				else if (i instanceof Fin){
+					if (n == 0)
+						break;
+					else
+						n--;
+				}
+				deltaLn++;
 			}
+			p.setLigne(ln + deltaLn);
 		}
 		else if (_code == codeFinCondition){ // dit au programme qu'il est sorti d'un bloc
-			// TODO: dire au programme qu'il est sorti d'un bloc (pas important, ne va peut-être jamais être fait)
 		}
 		else { // c'est une boucle, on retourne à la ligne indiqué
 			// il faudrait aussi dire au programme que l'on est sorti d'un groupe... (si ça devient nécéssaire)
-			app.getProgramme().setLigne(_code);
+			app.getProgramme().setLigne(_code-1);
 		}
+		app.getProgramme().decremente();
 	}
 
 }

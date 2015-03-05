@@ -19,7 +19,7 @@ public class Main {
 			return;
 		try {
 			Application app = new Application(Compilateur2.compile(inst), 10);
-			if (JOptionPane.showConfirmDialog(null, "ok") == JOptionPane.OK_OPTION)
+//			if (JOptionPane.showConfirmDialog(null, "ok") == JOptionPane.OK_OPTION)
 				app.start();
 		} 
 		catch (OperationInvalideException e) {

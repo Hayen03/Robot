@@ -93,4 +93,10 @@ public class Grille implements Drawable {
 		return this;
 	}
 	
+	public synchronized void reset(){
+		for (int i = 0; i < _grille.length; i++)
+			for (int j = 0; j < _grille[i].length; j++)
+				_grille[i][j] = false;
+	}
+	
 }

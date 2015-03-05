@@ -373,7 +373,7 @@ public class Compilateur2 {
 						}
 
 						else if (!Util.isAlphaNumeric(inst[j])) 
-							throw new OperationInvalideException("ERREUR: identificateur invalide\nln." + (_ln+1));
+							throw new OperationInvalideException("ERREUR: identificateur invalide (" + inst[j] + ")\nln." + (_ln+1));
 
 						// l'identificateur n'existe pas
 						else if (!estDeclarer(var, inst[j])) 

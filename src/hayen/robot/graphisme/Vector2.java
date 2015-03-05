@@ -2,6 +2,8 @@ package hayen.robot.graphisme;
 
 public class Vector2 {
 
+	public static final Vector2 zero = new Vector2(0, 0);
+	
 	private double _x;
 	private double _y;
 	

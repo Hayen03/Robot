@@ -29,23 +29,28 @@ public class Condition extends Instruction {
 		boolean v = Util.comparerExpression(a, b, _op);
 		if (!v){ // si v est faux, on va au fin correspondant
 			Instruction i = null;
+			int ln = p.getLigne();
 			int n = 0;
-			while (i == null){
-				i = p.getProchaineInstruction();
-				if (i.getClass().equals(Fin.class)){
-					if (n != 0){
-						n--;
-						i = null;
-					}
-				}
-				else if (i.getClass().equals(Condition.class)){
+			int deltaLn = 1;
+			while (ln+deltaLn < p.longueur()){
+				i = p.getInstructionA(ln + deltaLn);
+				if (i.getClass().equals(Condition.class)){
 					n++;
-					i = null;
 				}
+				else if (i.getClass().equals(Fin.class)){
+					if (n == 0)
+						break;
+					else
+						n--;
+				}
+				deltaLn++;
 			}
+			p.setLigne(ln + deltaLn);
 		}
-		// sinon, on ne fait rien et le programme passe à la ligne suivante
-		// + peut-être dire au programme qu'il rentre dans un nouveau bloc
+		else {
+			// sinon, on ne fait rien et le programme passe à la ligne suivante
+			p.incremente();
+		}
 	}
 	
 	@Override
