@@ -2,6 +2,7 @@ package hayen.robot.programme;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +12,13 @@ import java.io.IOException;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import hayen.robot.Direction;
 import hayen.robot.Robot;
@@ -32,19 +39,20 @@ public class Application extends Thread implements ActionListener{
 
 	private JButton _bouttonStart;
 	private JButton _bouttonStop;
+	private JButton _bouttonRecharge;
 
 	private boolean _enPause = false;
 	private boolean _interrompu = true;
 	private boolean _vivant = true;
-	
-	private String _fichier;
 
-	public Application(String fichier, int tailleGrille) throws FileNotFoundException, OperationInvalideException, IOException{
-		
+	private File _fichier;
+
+	public Application(File fichier, int tailleGrille) throws FileNotFoundException, OperationInvalideException, IOException{
+
 		_drawingPanel = new DrawingPanel();
 		_fenetrePrincipale = new JFrame();
 		_bouttons = new JPanel();
-		
+
 		ouvrirFichier(fichier);
 		_grille = new Grille(tailleGrille, tailleGrille);
 		_console = new Console();
@@ -54,45 +62,64 @@ public class Application extends Thread implements ActionListener{
 		_drawingPanel.addObject(_robot);
 		_drawingPanel.setPreferredSize(_grille.getPreferredSize());
 
-		_programme.setApp(this);
 		_grille.setApp(this);
 		_robot.setAnimer(true);
 
-		_bouttons.setLayout(new BoxLayout(_bouttons, BoxLayout.X_AXIS));
-		_bouttonStart = new JButton("start"){
-			@Override
-			public String getActionCommand(){
-				if (_interrompu)
-					return "start";
-				else
-					return "pause";
-			}
-			@Override
-			public String getText(){
-				if (_interrompu)
-					return "start";
-				else
-					return "pause";
-			}
-		};
-		_bouttonStart.addActionListener(this);
-		_bouttonStop = new JButton("stop");
-		_bouttonStop.setActionCommand("stop");
-		_bouttonStop.addActionListener(this);
-		_bouttons.add(_bouttonStart);
-		_bouttons.add(_bouttonStop);
-		
-		reserver();
+		{
+			JMenuBar menuBar = new JMenuBar();
+			JMenu menu = new JMenu("Fichier");
+			JMenuItem item1 = new JMenuItem("ouvrir", KeyEvent.VK_O);
+			item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ActionEvent.META_MASK));
+			item1.setActionCommand("ouvrir");
+			item1.addActionListener(this);
+			menuBar.add(menu);
+			menu.add(item1);
+			_fenetrePrincipale.setJMenuBar(menuBar);
+		}
 
-		_fenetrePrincipale.setLayout(new BoxLayout(_fenetrePrincipale.getContentPane(), BoxLayout.Y_AXIS));
-		_fenetrePrincipale.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		_fenetrePrincipale.getContentPane().add(_drawingPanel);
-		_fenetrePrincipale.getContentPane().add(_bouttons);
-		_fenetrePrincipale.getContentPane().add(_console);
-		_fenetrePrincipale.setResizable(false);
-		_fenetrePrincipale.pack();
-		_fenetrePrincipale.setLocation(10, 10);
-		_fenetrePrincipale.setVisible(true);
+		{
+			_bouttons.setLayout(new BoxLayout(_bouttons, BoxLayout.X_AXIS));
+			_bouttonStart = new JButton("start"){
+				@Override
+				public String getActionCommand(){
+					if (_interrompu)
+						return "start";
+					else
+						return "pause";
+				}
+				@Override
+				public String getText(){
+					if (_interrompu)
+						return "start";
+					else
+						return "pause";
+				}
+			};
+			_bouttonStart.addActionListener(this);
+			_bouttonStop = new JButton("stop");
+			_bouttonStop.setActionCommand("stop");
+			_bouttonStop.addActionListener(this);
+			_bouttonRecharge = new JButton("recharger");
+			_bouttonRecharge.setActionCommand("recharger");
+			_bouttonRecharge.addActionListener(this);
+			_bouttons.add(_bouttonStart);
+			_bouttons.add(_bouttonStop);
+			_bouttons.add(_bouttonRecharge);
+		}
+
+		{
+			_fenetrePrincipale.setLayout(new BoxLayout(_fenetrePrincipale.getContentPane(), BoxLayout.Y_AXIS));
+			_fenetrePrincipale.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			_fenetrePrincipale.getContentPane().add(_drawingPanel);
+			_fenetrePrincipale.getContentPane().add(_bouttons);
+			_fenetrePrincipale.getContentPane().add(_console);
+			_fenetrePrincipale.setResizable(false);
+			_fenetrePrincipale.pack();
+			_fenetrePrincipale.setLocation(10, 10);
+			_fenetrePrincipale.setVisible(true);
+		}
+
+		reserver();
 	}
 
 	public Grille getGrille(){
@@ -115,21 +142,23 @@ public class Application extends Thread implements ActionListener{
 	}
 
 	public void run(){
+		_programme.incremente();
 		while (_vivant){
-			_programme.incremente();
-			Instruction i = _programme.getInstructionA(_programme.getLigne());
-			if (i == null){
-				_enPause = true;
-			}
-			if (!_enPause && !_interrompu){
-				i.executer(this);
-				_programme.prochaineLigne();
-				i = _programme.getInstructionA(_programme.getLigne());
-			} 
-			else{
-				try {
-					sleep(100);
-				} catch (InterruptedException e) {}
+			if (_programme != null){
+				Instruction i = _programme.getInstructionA(_programme.getLigne());
+				if (i == null){
+					_enPause = true;
+				}
+				if (!_enPause && !_interrompu){
+					i.executer(this);
+					_programme.prochaineLigne();
+					i = _programme.getInstructionA(_programme.getLigne());
+				} 
+				else{
+					try {
+						sleep(100);
+					} catch (InterruptedException e) {}
+				}
 			}
 		}
 	}
@@ -161,6 +190,7 @@ public class Application extends Thread implements ActionListener{
 
 		else if (cmd.equals("stop")){
 			_interrompu = true;
+			_console.clear();
 			_programme.reset();
 			_robot.reset();
 			_grille.reset();
@@ -170,27 +200,53 @@ public class Application extends Thread implements ActionListener{
 		}
 		else if (cmd.equals("recharger")){
 			_interrompu = true;
+			_console.clear();
+			_programme.reset();
 			_robot.reset();
 			_grille.reset();
 			_drawingPanel.repaint();
 			try {
 				ouvrirFichier(_fichier);
+				System.out.println("recharger");
 			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
+				_console.print("ERREUR: Fichier inexistant ou non trouvé");
 			} catch (OperationInvalideException e1) {
-				e1.printStackTrace();
+				_console.print(e1.getMessage());
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				_console.print(e1.getMessage());
 			}
 			reserver();
 		}
-		// TODO charger
+		else if (cmd.equals("ouvrir")){
+			JFileChooser fc = new JFileChooser();
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("Fichier Programme Robot", "pr");
+			fc.setFileFilter(filter);
+			int v = fc.showOpenDialog(_fenetrePrincipale);
+			if (v == JFileChooser.APPROVE_OPTION){
+				_interrompu = true;
+				_console.clear();
+				_programme.reset();
+				_robot.reset();
+				_grille.reset();
+				_drawingPanel.repaint();
+				try {
+					ouvrirFichier(fc.getSelectedFile());
+				} catch (FileNotFoundException e1) {
+					_console.print("ERREUR: Fichier inexistant ou non trouvé");
+				} catch (OperationInvalideException e1) {
+					_console.print(e1.getMessage());
+					_programme = null;
+				} catch (IOException e1) {
+					_console.print(e1.getMessage());
+				}
+				reserver();
+			}
+		}
 	}
-	
-	private void ouvrirFichier(String fichier) throws OperationInvalideException, FileNotFoundException, IOException{
+
+	private void ouvrirFichier(File fichier) throws OperationInvalideException, FileNotFoundException, IOException{
 		BufferedReader br;
-		File f = new File(fichier);
-		br = new BufferedReader(new FileReader(f));
+		br = new BufferedReader(new FileReader(fichier));
 		_fichier = fichier;
 		StringBuilder sb = new StringBuilder();
 		String ln = br.readLine();
@@ -198,12 +254,13 @@ public class Application extends Thread implements ActionListener{
 			sb.append(ln + '\n');
 			ln = br.readLine();
 		}
-		
+
 		br.close();
+		_fenetrePrincipale.setTitle(fichier.getName());
 		_programme = new Programme(Compilateur2.compile(sb.toString()));
-		_fenetrePrincipale.setTitle(f.getName());
+		_programme.setApp(this);
 	}
-	
+
 	private void reserver(){
 		if (_programme == null)
 			return;
@@ -219,5 +276,5 @@ public class Application extends Thread implements ActionListener{
 		_programme.reserver("sud", Direction.Sud);
 		_programme.reserver("est", Direction.Est);
 	}
-	
+
 }

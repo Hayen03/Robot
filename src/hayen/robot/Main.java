@@ -1,5 +1,6 @@
 package hayen.robot;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -10,7 +11,7 @@ public class Main {
 
 	public static void main(String[] args){
 		try {
-			Application app = new Application("source/exempleRobot2.pr", 10);
+			Application app = new Application(new File("source/exempleRobot2.pr"), 10);
 //			if (JOptionPane.showConfirmDialog(null, "ok") == JOptionPane.OK_OPTION)
 				app.start();
 		} 

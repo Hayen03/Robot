@@ -45,6 +45,10 @@ public class Console extends TextArea {
 		_buffer = "";
 	}
 	
+	public void clear(){
+		setText("");
+	}
+	
 	@Override
 	public Dimension getPreferredSize(){
 		return new Dimension(5*getColumns(), 20*(getRows()+1));

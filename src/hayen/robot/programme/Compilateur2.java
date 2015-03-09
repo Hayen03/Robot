@@ -198,7 +198,7 @@ public class Compilateur2 {
 
 					// 1
 					if (inst.length == 1)
-						throw new OperationInvalideException("ln." + (_ln+1)); // ERREUR 
+						throw new OperationInvalideException("ERREUR: instruction invalide\nln." + (_ln+1)); // ERREUR 
 
 					// 2
 					Object[] op1 = null, op2 = null;
@@ -207,8 +207,14 @@ public class Compilateur2 {
 						Vector<Object> tmp1 = new Vector<Object>(), tmp2 = new Vector<Object>();
 						for (int i = 1; i < inst.length; i++){ // op1 & op
 							String s = inst[i];
-							if ("+-*/%<>&|!".contains(s)){
+							if ("<>&|!=".contains(s)){
 								op = s.charAt(0);
+							}
+							else if ("+-*/%".contains(s)){
+								if (op == null)
+									tmp1.add(s.charAt(0));
+								else
+									tmp2.add(s.charAt(0));
 							}
 							else if (Util.isDigit(s)){
 								if (op == null)
@@ -223,17 +229,17 @@ public class Compilateur2 {
 									tmp2.add(s);
 							}
 							else 
-								throw new OperationInvalideException("Erreur 3 ln." + (_ln+1));
+								throw new OperationInvalideException("ERREUR: expression invalide (s)\nln." + (_ln+1));
 						}
 						op1 = tmp1.toArray();
 						op2 = tmp2.toArray();
 					}
 					if (op1.length == 0 || op2.length == 0 || op == 0)
-						throw new OperationInvalideException("Erreur 5 ln." + (_ln+1));
+						throw new OperationInvalideException("ERREUR: instruction invalide\nln." + (_ln+1));
 
 					// 3
 					if (!(verifierOperation(op1) || verifierOperation(op2)))
-						throw new OperationInvalideException("Erreur 6 ln." + (_ln+1));
+						throw new OperationInvalideException("ERREUR: instruction Invalide\nln." + (_ln+1));
 
 					// 4
 					instructions.add(new Condition(op1, op, op2));
