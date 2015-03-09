@@ -2,6 +2,11 @@ package hayen.robot.programme;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -31,17 +36,19 @@ public class Application extends Thread implements ActionListener{
 	private boolean _enPause = false;
 	private boolean _interrompu = true;
 	private boolean _vivant = true;
+	
+	private String _fichier;
 
-	public Application(Instruction[] inst, int tailleGrille){
-		_programme = new Programme(inst);
-		_grille = new Grille(tailleGrille, tailleGrille);
-		_console = new Console();
-		_programme.setConsole(_console);
-		_robot = new Robot(this);
-
+	public Application(String fichier, int tailleGrille) throws FileNotFoundException, OperationInvalideException, IOException{
+		
 		_drawingPanel = new DrawingPanel();
 		_fenetrePrincipale = new JFrame();
 		_bouttons = new JPanel();
+		
+		ouvrirFichier(fichier);
+		_grille = new Grille(tailleGrille, tailleGrille);
+		_console = new Console();
+		_robot = new Robot(this);
 
 		_drawingPanel.addObject(_grille);
 		_drawingPanel.addObject(_robot);
@@ -50,7 +57,6 @@ public class Application extends Thread implements ActionListener{
 		_programme.setApp(this);
 		_grille.setApp(this);
 		_robot.setAnimer(true);
-		_programme.setConsole(_console);
 
 		_bouttons.setLayout(new BoxLayout(_bouttons, BoxLayout.X_AXIS));
 		_bouttonStart = new JButton("start"){
@@ -69,13 +75,14 @@ public class Application extends Thread implements ActionListener{
 					return "pause";
 			}
 		};
-//		_bouttonStart.setActionCommand("start");
 		_bouttonStart.addActionListener(this);
 		_bouttonStop = new JButton("stop");
 		_bouttonStop.setActionCommand("stop");
 		_bouttonStop.addActionListener(this);
 		_bouttons.add(_bouttonStart);
 		_bouttons.add(_bouttonStop);
+		
+		reserver();
 
 		_fenetrePrincipale.setLayout(new BoxLayout(_fenetrePrincipale.getContentPane(), BoxLayout.Y_AXIS));
 		_fenetrePrincipale.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,18 +93,6 @@ public class Application extends Thread implements ActionListener{
 		_fenetrePrincipale.pack();
 		_fenetrePrincipale.setLocation(10, 10);
 		_fenetrePrincipale.setVisible(true);
-
-		_programme.reserver("largeur", (int)_grille.getTailleGrille().getX());
-		_programme.reserver("hauteur", (int)_grille.getTailleGrille().getY());
-		_programme.reserver("posx", 0);
-		_programme.reserver("posy", 0);
-		_programme.reserver("orientation", _robot.getOrientation());
-		_programme.reserver("gauche", 1);
-		_programme.reserver("droite", -1);
-		_programme.reserver("nord", Direction.Nord);
-		_programme.reserver("ouest", Direction.Ouest);
-		_programme.reserver("sud", Direction.Sud);
-		_programme.reserver("est", Direction.Est);
 	}
 
 	public Grille getGrille(){
@@ -173,6 +168,56 @@ public class Application extends Thread implements ActionListener{
 			_programme.reserver("posx", 0);
 			_programme.reserver("posy", 0);
 		}
+		else if (cmd.equals("recharger")){
+			_interrompu = true;
+			_robot.reset();
+			_grille.reset();
+			_drawingPanel.repaint();
+			try {
+				ouvrirFichier(_fichier);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (OperationInvalideException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			reserver();
+		}
+		// TODO charger
 	}
-
+	
+	private void ouvrirFichier(String fichier) throws OperationInvalideException, FileNotFoundException, IOException{
+		BufferedReader br;
+		File f = new File(fichier);
+		br = new BufferedReader(new FileReader(f));
+		_fichier = fichier;
+		StringBuilder sb = new StringBuilder();
+		String ln = br.readLine();
+		while (ln != null){
+			sb.append(ln + '\n');
+			ln = br.readLine();
+		}
+		
+		br.close();
+		_programme = new Programme(Compilateur2.compile(sb.toString()));
+		_fenetrePrincipale.setTitle(f.getName());
+	}
+	
+	private void reserver(){
+		if (_programme == null)
+			return;
+		_programme.reserver("largeur", (int)_grille.getTailleGrille().getX());
+		_programme.reserver("hauteur", (int)_grille.getTailleGrille().getY());
+		_programme.reserver("posx", 0);
+		_programme.reserver("posy", 0);
+		_programme.reserver("orientation", _robot.getOrientation());
+		_programme.reserver("gauche", 1);
+		_programme.reserver("droite", -1);
+		_programme.reserver("nord", Direction.Nord);
+		_programme.reserver("ouest", Direction.Ouest);
+		_programme.reserver("sud", Direction.Sud);
+		_programme.reserver("est", Direction.Est);
+	}
+	
 }

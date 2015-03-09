@@ -40,7 +40,7 @@ public class Afficher extends Instruction {
 			}
 		}
 
-		Console c = p.getConsole();
+		Console c = p.getApp().getConsole();
 		if (c == null)
 			System.out.print(buffer);
 		else

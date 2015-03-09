@@ -1,35 +1,19 @@
 package hayen.robot.programme;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import hayen.robot.graphisme.Console;
 import hayen.robot.programme.instruction.Instruction;
 
 public class Programme {
 	
 	private Application _app;
-	private Console _console;
 	
 	private final Instruction[] _instructions;
 	private Vector<Hashtable<String, Integer>> _variables;
 	private int _ligne;
 	private final int _longueur;
-	private String _titre;
 	
-	public Programme(Instruction[] instructions, String titre){
-		
-		_instructions = instructions;
-		_variables = new Vector<Hashtable<String, Integer>>();
-		_variables.add(new Hashtable<String, Integer>());
-		_ligne = 0;
-		_longueur = _instructions.length;
-		
-		_console = null;
-		_titre = titre;
-	}
 	public Programme(Instruction[] instructions){
 		
 		_instructions = instructions;
@@ -37,50 +21,17 @@ public class Programme {
 		_variables.add(new Hashtable<String, Integer>());
 		_ligne = 0;
 		_longueur = _instructions.length;
-		
-		_console = null;
-		_titre = "";
-	}
-	public Programme(String adresse) throws FileNotFoundException, IOException, ClassNotFoundException, FichierIncorrectException, OperationInvalideException{
-		_instructions = getInstructionsFromFichier(adresse);
-		_longueur = _instructions.length;
-		_console = null;
-		_titre = "";
-	}
-	
-	public Programme setConsole(Console c){
-		_console = c;
-		return this;
-	}
-	public Console getConsole(){
-		return _console;
 	}
 	
 	public Application getApp(){
 		return _app;
 	}
-	
-	public Programme setApp(Application app){
+	public void setApp(Application app){
 		_app = app;
-		app.getFenetrePrincipale().setTitle(_titre);
-		return this;
 	}
 	
 	public int longueur(){
 		return _longueur;
-	}
-	public String getTitre(){
-		return _titre;
-	}
-	public Programme setTitre(String titre){
-		_titre = titre;
-		_app.getFenetrePrincipale().setTitle(titre);
-		return this;
-	}
-	
-	// TODO Il y a beaucoup de chose à changer ici
-	private static Instruction[] getInstructionsFromFichier(String adresse){
-		return null;
 	}
 	
 	public synchronized Instruction getInstructionA(int ln){
