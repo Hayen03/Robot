@@ -1,0 +1,10 @@
+## build & jars
+/build
+/out
+*.jars
+
+## idea
+/.idea
+*.imr
+*.ipr
+*.iml
