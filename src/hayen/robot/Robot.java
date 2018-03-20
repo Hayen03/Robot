@@ -148,7 +148,7 @@ public class Robot implements Drawable {
 		g2.rotate(-theta, centre[0], centre[1]);
 	}
 	
-	private Animation getAnimDeplacement(Point direction){
+	private Animation getAnimDeplacement(final Point direction){
 		Animation anim = new Animation(){
 			double f = 0;
 			Point dir = direction;
@@ -171,10 +171,10 @@ public class Robot implements Drawable {
 		return anim;
 	}
 	
-	private Animation getAnimRotation(int direction){
+	private Animation getAnimRotation(final int direction){
 		Animation anim = new Animation(){
 			double f = 0;
-			int dir = direction;
+			final int dir = direction;
 			
 			@Override
 			public boolean run(Robot obj, int dt){
